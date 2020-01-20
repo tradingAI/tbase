@@ -1,2 +1,2 @@
-# TradeBaselines
-Baselines of reinforcement learning agents
+# Tbase
+Baselines of trade agents use reinforcement learning algorithms.
