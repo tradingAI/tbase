@@ -1,0 +1,9 @@
+*.pyc
+*.log
+*.egg-info/
+*tensorboard/
+*ipynb_checkpoints
+*__pycache__/
+*.pkl
+*tmp/
+.ropeproject/
