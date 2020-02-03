@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 import multiprocessing
 import sys
+from importlib import import_module
 
-from tbase.common.cmd_util import (common_arg_parser, make_env, make_vec_env,
-                                   parse_unknown_args)
+from tbase.common.cmd_util import common_arg_parser, logger, make_trade_env
 
 try:
     from mpi4py import MPI
@@ -11,28 +11,94 @@ except ImportError:
     MPI = None
 
 
+def get_default_network(env_type):
+    return 'lstm'
+
+
+def get_alg_module(alg, submodule=None):
+    submodule = submodule or alg
+    try:
+        # try to import the alg module from tbase
+        alg_module = import_module('.'.join(['tbase', alg, submodule]))
+        return alg_module
+    except ImportError:
+        raise("get_alg_module error: not import_module %s" % alg)
+
+
+def get_learn_function(alg):
+    return get_alg_module(alg).learn
+
+
+def get_learn_function_defaults(alg, env_type):
+    try:
+        alg_defaults = get_alg_module(alg, 'defaults')
+        kwargs = getattr(alg_defaults, env_type)()
+    except (ImportError, AttributeError):
+        kwargs = {}
+    return kwargs
+
+
+def train(args, extra_args, env_type):
+    print('env_type: {}'.format(args.env))
+
+    total_timesteps = int(args.num_timesteps)
+    seed = args.seed
+
+    learn = get_learn_function(args.alg)
+    alg_kwargs = get_learn_function_defaults(args.alg, env_type)
+    alg_kwargs.update(extra_args)
+
+    env = build_env(args)
+
+    if args.network:
+        alg_kwargs['network'] = args.network
+    else:
+        if alg_kwargs.get('network') is None:
+            alg_kwargs['network'] = get_default_network(env_type)
+
+    print('Training {} on {}:{} with arguments \n{}'.format(
+        args.alg, env.args, alg_kwargs))
+
+    model = learn(
+        env=env,
+        seed=seed,
+        total_timesteps=total_timesteps,
+        **alg_kwargs
+    )
+
+    return model, env
+
+
+def build_env(args):
+    ncpu = multiprocessing.cpu_count()
+    if sys.platform == 'darwin':
+        ncpu = ncpu // 2
+    nenv = args.num_env if args.num_env else ncpu
+    alg = args.alg
+    seed = args.seed
+    env_type, env_id = get_env_type(args)
+
+    env = make_vec_env()
+    return env
 
 
 def main(args):
     arg_parser = common_arg_parser()
-    args, unknown_args = arg_parser.parse_known_args(args)
-    extra_args = parse_cmdline_kwargs(unknown_args)
+    args = arg_parser.parse_known_args(args)
 
     if MPI is None or MPI.COMM_WORLD.Get_rank() == 0:
         rank = 0
-        configure_logger(args.log_path)
     else:
         rank = MPI.COMM_WORLD.Get_rank()
-        configure_logger(args.log_path, format_strs=[])
 
-    model, env = train(args, extra_args)
+    model, env = train(args)
 
     if args.save_path is not None and rank == 0:
         save_path = osp.expanduser(args.save_path)
         model.save(save_path)
 
     if args.play:
-        logger.log("Running trained model")
+        logger.INFO("Running trained model")
         obs = env.reset()
 
         state = model.initial_state if hasattr(model, 'initial_state') else None
@@ -57,7 +123,6 @@ def main(args):
     env.close()
 
     return model
-
 
 
 if __name__ == '__main__':

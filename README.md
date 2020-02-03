@@ -20,6 +20,16 @@ brew install cmake openmpi
 
 # pytorch
 
+# Features
+
+- MPI 多进程方式运行 Enviroment
+- 通过运行参数选择:
+
+  - 环境
+  - 算法
+  - Policy
+  - Q
+
 # 训练
 
 # 保存与加载模型
