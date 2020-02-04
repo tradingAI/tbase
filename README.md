@@ -22,7 +22,8 @@ brew install cmake openmpi
 
 # Features
 
-- MPI 多进程方式运行 Enviroment
+- 支持MPI 多进程方式运行 Enviroment
+- 支持单Agent与多Agent
 - 通过运行参数选择:
 
   - 环境
