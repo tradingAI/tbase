@@ -3,8 +3,8 @@ FROM ubuntu:18.04
 # 更换为阿里云境像
 RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list
 
-RUN apt-get -y update && \
-    apt-get -y upgrade && \
+RUN apt-get -y update --fix-missing && \
+    apt-get -y upgrade --fix-missing && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install --fix-missing \
         gcc \
         g++ \

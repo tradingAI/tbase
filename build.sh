@@ -1,1 +1,2 @@
-docker build  --no-cache --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN . -t aiminders/trade
+docker build --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN . -t aiminders/trade
+# docker build  --no-cache --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN . -t aiminders/trade
