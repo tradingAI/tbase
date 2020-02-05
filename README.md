@@ -6,22 +6,11 @@ Baselines of trade agents use reinforcement learning algorithms.
 
 # 安装
 
-## Ubuntu
-
-```
-sudo apt-get update && sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
-```
-
-## Mac OS
-
-```
-brew install cmake openmpi
-```
-
-# pytorch
+[docker install](https://docs.docker.com/install/)
 
 # Features
 
+- GPU 加速
 - 支持多进程方式运行 Enviroment
 - 支持单Agent与多Agent, 例如: MADDPG
 - 通过运行参数选择:
@@ -31,6 +20,6 @@ brew install cmake openmpi
   - Policy-Net
   - Value-Net
 
-# 训练
+# 训练与保存模型
 
-# 保存与加载模型
+# 加载模型
