@@ -22,14 +22,14 @@ brew install cmake openmpi
 
 # Features
 
-- 支持MPI 多进程方式运行 Enviroment
-- 支持单Agent与多Agent
+- 支持多进程方式运行 Enviroment
+- 支持单Agent与多Agent, 例如: MADDPG
 - 通过运行参数选择:
 
   - 环境
   - 算法
-  - Policy
-  - Q
+  - Policy-Net
+  - Value-Net
 
 # 训练
 

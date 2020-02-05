@@ -42,10 +42,6 @@ RUN ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com \
     tushare gym torch matplotlib
 
-# MPI
-RUN apt-get -y install --fix-missing libopenmpi-dev openmpi-bin openmpi-doc
-RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com mpi4py
-
 ENV CODE_DIR /root/trade
 
 # install tgym
