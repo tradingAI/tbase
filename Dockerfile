@@ -47,7 +47,7 @@ ENV CODE_DIR /root/trade
 # install tgym
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
-RUN echo "rm -rf tgym"
+RUN echo "rm tgym"
 RUN rm -rf tgym
 RUN echo "tgym"
 RUN git clone https://github.com/iminders/tgym.git

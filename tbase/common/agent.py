@@ -6,9 +6,10 @@ import numpy as np
 import torch
 
 from replay_memory import Memory
+from torch_utils import to_device
 
 
-# NOTE: env 默认设置为多 agent 环境
+# NOTE: env 默认设置为单 agent 环境
 def collect_samples(pid, env, queue, policy, custom_reward,
                     mean_action, render, running_state, min_batch_size,
                     arglist):
@@ -40,8 +41,7 @@ def collect_samples(pid, env, queue, policy, custom_reward,
                 else:
                     action = policy.select_action(state_var).numpy()
             action = action.astype(np.float)
-            # NOTE: env 默认设置为多 agent 环境
-            next_state, reward, done, info = env.step(action)
+            next_state, reward, done, info, _ = env.step(action)
 
             reward_episode += reward
             if running_state is not None:
@@ -108,7 +108,8 @@ def merge_log(log_list):
 class Agent:
 
     def __init__(self, env, policy, device, custom_reward=None,
-                 mean_action=False, render=False, running_state=None, num_threads=1):
+                 mean_action=False, render=False, running_state=None,
+                 num_threads=1):
         self.env = env
         self.policy = policy
         self.device = device
@@ -126,14 +127,18 @@ class Agent:
         workers = []
 
         for i in range(self.num_threads-1):
-            worker_args = (i+1, queue, self.env, self.policy, self.custom_reward, self.mean_action,
+            worker_args = (i+1, queue, self.env, self.policy,
+                           self.custom_reward, self.mean_action,
                            False, self.running_state, thread_batch_size)
-            workers.append(multiprocessing.Process(target=collect_samples, args=worker_args))
+            workers.append(multiprocessing.Process(target=collect_samples,
+                                                   args=worker_args))
         for worker in workers:
             worker.start()
 
-        memory, log = collect_samples(0, None, self.env, self.policy, self.custom_reward, self.mean_action,
-                                      self.render, self.running_state, thread_batch_size)
+        memory, log = collect_samples(0, None, self.env, self.policy,
+                                      self.custom_reward, self.mean_action,
+                                      self.render, self.running_state,
+                                      thread_batch_size)
 
         worker_logs = [None] * len(workers)
         worker_memories = [None] * len(workers)
