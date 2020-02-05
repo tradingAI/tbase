@@ -6,6 +6,12 @@ Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 
 # 安装
 
+设置 tushare token[(token注册链接:https://tushare.pro/register?reg=124861)](https://tushare.pro/register?reg=124861):
+
+```
+export TUSHARE_TOKEN=YOUR_TOKEN
+```
+
 [docker install](https://docs.docker.com/install/)
 
 # Features(开发中, 欢迎一起完善)
