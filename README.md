@@ -1,6 +1,6 @@
 # tbase
 
-Baselines of trade agents use reinforcement learning algorithms.
+Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 
 支持环境： python3(>=3.5)
 
