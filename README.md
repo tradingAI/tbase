@@ -30,9 +30,8 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
   - [ ] One Agent
 
-    - [ ] DQN
-    - [ ] Dueling DQN
     - [ ] DDPG
+    - [ ] Dueling DDPG
     - [ ] A2C
     - [ ] PPO
     - [ ] PPO2
