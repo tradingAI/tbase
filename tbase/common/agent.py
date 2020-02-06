@@ -5,15 +5,13 @@ import time
 import numpy as np
 import torch
 
+from cmd_util import make_env
 from replay_memory import Memory
 from torch_utils import to_device
 
 
 # NOTE: env 默认设置为单 agent 环境
-def collect_samples(pid, env, queue, policy, custom_reward,
-                    mean_action, render, running_state, min_batch_size,
-                    arglist):
-    torch.randn(pid)
+def collect_samples(pid, env, queue, policy, min_batch_size, args):
     log = dict()
     memory = Memory()
     num_steps = 0
@@ -27,37 +25,24 @@ def collect_samples(pid, env, queue, policy, custom_reward,
 
     while num_steps < min_batch_size:
         state = env.reset()
-
-        if running_state is not None:
-            state = running_state(state)
         reward_episode = 0
-
         for t in range(5000):
             state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
                 torch.float)
             with torch.no_grad():
-                if mean_action:
-                    action = policy(state_var)[0].numpy()
-                else:
-                    action = policy.select_action(state_var).numpy()
+                action = policy.select_action(state_var).numpy()
             action = action.astype(np.float)
             next_state, reward, done, info, _ = env.step(action)
 
             reward_episode += reward
-            if running_state is not None:
-                next_state = running_state(next_state)
 
-            if custom_reward is not None:
-                reward = custom_reward(state, action)
-                total_c_reward += reward
-                min_c_reward = min(min_c_reward, reward)
-                max_c_reward = max(max_c_reward, reward)
+            total_c_reward += reward
+            min_c_reward = min(min_c_reward, reward)
+            max_c_reward = max(max_c_reward, reward)
 
             mask = 0 if done else 1
             memory.push(state, action, mask, next_state, reward)
 
-            if render:
-                env.render()
             if done:
                 break
 
@@ -76,11 +61,6 @@ def collect_samples(pid, env, queue, policy, custom_reward,
     log['avg_reward'] = total_reward / num_episodes
     log['max_reward'] = max_reward
     log['min_reward'] = min_reward
-    if custom_reward is not None:
-        log['total_c_reward'] = total_c_reward
-        log['avg_c_reward'] = total_c_reward / num_steps
-        log['max_c_reward'] = max_c_reward
-        log['min_c_reward'] = min_c_reward
 
     if queue is not None:
         queue.put([pid, memory, log])
@@ -107,10 +87,14 @@ def merge_log(log_list):
 
 class Agent:
 
-    def __init__(self, env, policy, device, custom_reward=None,
+    def __init__(self, args, policy, device, custom_reward=None,
                  mean_action=False, render=False, running_state=None,
                  num_threads=1):
-        self.env = env
+        self.envs = []
+        for i in range(num_threads):
+            seed = i * 1000 * i
+            env = make_env(env_id=i, seed=seed, args=args)
+            self.envs.append(env)
         self.policy = policy
         self.device = device
         self.custom_reward = custom_reward
@@ -127,7 +111,7 @@ class Agent:
         workers = []
 
         for i in range(self.num_threads-1):
-            worker_args = (i+1, queue, self.env, self.policy,
+            worker_args = (i+1, queue, self.env[i], self.policy,
                            self.custom_reward, self.mean_action,
                            False, self.running_state, thread_batch_size)
             workers.append(multiprocessing.Process(target=collect_samples,
@@ -135,7 +119,7 @@ class Agent:
         for worker in workers:
             worker.start()
 
-        memory, log = collect_samples(0, None, self.env, self.policy,
+        memory, log = collect_samples(0, None, self.env[0], self.policy,
                                       self.custom_reward, self.mean_action,
                                       self.render, self.running_state,
                                       thread_batch_size)

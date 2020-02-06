@@ -27,3 +27,10 @@ def init(module, weight_init, bias_init, gain=1):
 
 def to_device(device, *args):
     return [x.to(device) for x in args]
+
+
+def soft_update(target, source, tau):
+    for target_param, source_param in zip(target.parameters(),
+                                          source.parameters()):
+        target_param.data.copy_(
+            (1 - tau) * target_param.data + tau * source_param.data)

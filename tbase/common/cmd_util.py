@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import random
 
 import numpy as np
@@ -7,50 +8,39 @@ import numpy as np
 import tgym
 
 
-def set_global_seeds(i):
-    try:
-        import MPI
-        rank = MPI.COMM_WORLD.Get_rank()
-    except ImportError:
-        rank = 0
-
-    myseed = i + 1000 * rank if i is not None else None
+def set_global_seeds(seed):
     try:
         import torch
-        torch.manual_seed(myseed)
-        torch.cuda.manual_seed(myseed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
         torch.backends.cudnn.deterministic = True
     except ImportError:
         pass
-    np.random.seed(myseed)
-    random.seed(myseed)
+    np.random.seed(seed)
+    random.seed(seed)
 
 
-def make_trade_env(env_id,
-                   seed,
-                   rank=0,
-                   ts_token=None,
-                   start="20190101",
-                   end="20200101",
-                   codes=["000001.SZ", "000002.SZ"],
-                   indexs=["000001.SH", "399001.SZ"],
-                   data_dir="/tmp/tgym",
-                   scenario="multi_vol"):
+def make_env(env_id, seed, args):
     """
     Create a wrapped, monitored gym.Env for Tgym.
     """
     set_global_seeds(seed)
+    ts_token = os.getenv("TUSHARE_TOKEN")
+    codes = args.codes.split(",")
+    indexs = args.indexs.split(",")
+
     m = tgym.market.Market(
             ts_token=ts_token,
-            start=start,
-            end=end,
+            start=args.start,
+            end=args.end,
             codes=codes,
             indexs=indexs,
-            data_dir=data_dir)
-    env = tgym.scenario.make_env(scenario=scenario,
+            data_dir=args.data_dir)
+    env = tgym.scenario.make_env(scenario=args.scenario,
                                  market=m,
-                                 investment=100000.0,
-                                 look_back_days=10)
+                                 investment=args.investment,
+                                 look_back_days=args.look_back_days,
+                                 )
     return env
 
 
@@ -73,7 +63,7 @@ def common_arg_parser():
                         default='multi_vol')
     parser.add_argument("--codes", type=str, default="000001.SZ,000002.SZ",
                         help="tushare code of the experiment stocks")
-    parser.add_argument("--indexs", type=str, default="",
+    parser.add_argument("--indexs", type=str, default="000001.SH,399001.SZ",
                         help="tushare code of the indexs")
     parser.add_argument("--start", type=str, default='20190101',
                         help="when start the game")
