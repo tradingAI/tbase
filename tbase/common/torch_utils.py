@@ -5,7 +5,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 # full connect layer
-def fc(in_features, out_features, *args):
+def fc(in_features, out_features):
     layer = nn.Linear(in_features, out_features)
     nn.init.xavier_normal_(layer.weight)
     # 默认为随机初始化

@@ -1,31 +1,24 @@
 # -*- coding:utf-8 -*-
 import torch.nn as nn
 
+from tbase.common.torch_utils import device
+
 
 class BaseNet(nn.Module):
     def __init__(self):
         super(BaseNet, self).__init__()
+        self.device = device
 
     def forward(*args):
         raise NotImplementedError
 
 
-# Actor Critic Agent
-class ACAgent(nn.Module):
+class BasePolicy(BaseNet):
     def __init__(self):
-        super(ACAgent, self).__init__()
+        super(BasePolicy, self).__init__()
 
-    def save(self):
+    def action(self):
         raise NotImplementedError
 
-    def load(self):
-        raise NotImplementedError
-
-    def action(state):
-        raise NotImplementedError
-
-    def select_action(state):
-        raise NotImplementedError
-
-    def learn(*args):
+    def select_action(self):
         raise NotImplementedError
