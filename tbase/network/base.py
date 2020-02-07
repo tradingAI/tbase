@@ -11,9 +11,9 @@ class BaseNet(nn.Module):
 
 
 # Actor Critic Agent
-class BaseACAgent(nn.Module):
+class ACAgent(nn.Module):
     def __init__(self):
-        super(BaseACAgent, self).__init__()
+        super(ACAgent, self).__init__()
 
     def save(self):
         raise NotImplementedError
