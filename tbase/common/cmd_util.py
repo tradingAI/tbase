@@ -74,14 +74,14 @@ def common_arg_parser():
     parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
     parser.add_argument("--gamma", type=float, default=0.75,
                         help="discount factor")
-    parser.add_argument("--max_grad_norm", type=float, default=1,
+    parser.add_argument("--max_grad_norm", type=float, default=5,
                         help="max gradient norm for clip")
-    parser.add_argument("--tau", type=int, default=0.01,
+    parser.add_argument("--tau", type=int, default=0.99,
                         help="how depth we exchange the parameters of the nn")
     parser.add_argument('--max_episode', type=float, default=1000)
-    parser.add_argument('--explore_size', type=int, default=100)
-    parser.add_argument('--sample_size', type=int, default=100)
-    parser.add_argument('--warm_up', type=int, default=1000)
+    parser.add_argument('--explore_size', type=int, default=200)
+    parser.add_argument('--sample_size', type=int, default=200)
+    parser.add_argument('--warm_up', type=int, default=10000)
     parser.add_argument('--model_dir', help='dir to save trained model',
                         default="/tmp/tbase/models", type=str)
     parser.add_argument('--max-iter-num', type=int, default=500, metavar='N',

@@ -19,6 +19,7 @@ from tbase.network.values import LSTM_Merge_MLP
 # 擦索env,将Transitions存入memory
 def explore(pid, queue, env, state, memory, policy, size):
     num_steps = 0
+    rewards = []
     while num_steps < size:
         state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
             torch.float)
@@ -27,12 +28,13 @@ def explore(pid, queue, env, state, memory, policy, size):
         action = action.astype(np.float)
         next_state, reward, done, info, _ = env.step(action)
         memory.add(state, action, reward, next_state, done)
+        rewards.append(reward)
         num_steps += 1
         if done:
             state = env.reset()
             continue
         state = next_state
-    queue.put([pid, memory._next_idx, memory, env, state])
+    queue.put([pid, memory._next_idx, memory, env, state, rewards])
 
 
 class Agent(ACAgent):
@@ -86,8 +88,9 @@ class Agent(ACAgent):
             worker.start()
 
         obs, action, rew, obs_next, done = [], [], [], [], []
+        reward_log = []
         for _ in workers:
-            i, next_idx,  memory, env, state = queue.get()
+            i, next_idx,  memory, env, state, rewards = queue.get()
             self.memorys[i] = memory
             self.envs[i] = env
             self.states[i] = state
@@ -99,6 +102,8 @@ class Agent(ACAgent):
             rew.append(_rew)
             obs_next.append(_obs_next)
             done.append(_done)
+            reward_log.extend(rewards)
+        print("avg reward:", np.mean(reward_log))
 
         return np.concatenate(tuple(obs), axis=0),\
             np.concatenate(tuple(action), axis=0), \
@@ -109,7 +114,6 @@ class Agent(ACAgent):
     def update_params(self, _obs, _action, _rew, _obs_next, _done):
         logger.debug("update parms")
         # --use the date to update the value
-        print(_obs.shape, _rew.shape)
         reward = torch.tensor(_rew, device=device, dtype=torch.float)
         reward = reward.reshape(-1, 1)
         done = torch.tensor(~_done, device=device, dtype=torch.float)
@@ -124,7 +128,6 @@ class Agent(ACAgent):
 
         target_q_next = self.target_value.forward(obs_next, target_act_next)
         target_q = reward + torch.mul(target_q_next, (done * self.args.gamma))
-
         q = self.value.forward(obs, action)
         # bellman equation
         value_loss = torch.nn.MSELoss()(q, target_q)
@@ -172,13 +175,14 @@ class Agent(ACAgent):
 
             if (i_iter + 1) % self.args.save_model_interval == 0:
                 self.save(self.model_dir)
-                exit(1)
 
             """clean up gpu memory"""
             clear_memory()
 
 
 def main():
+    # import logging
+    # logger.setLevel(logging.DEBUG)
     args = common_arg_parser()
     env = make_env(args=args)
     input_size = env.input_size
