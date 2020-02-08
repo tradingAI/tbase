@@ -8,6 +8,8 @@ class BaseNet(nn.Module):
     def __init__(self):
         super(BaseNet, self).__init__()
         self.device = device
+        self.action_low = -1
+        self.action_high = 1
 
     def forward(*args):
         raise NotImplementedError

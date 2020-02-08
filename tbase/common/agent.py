@@ -7,12 +7,22 @@ import torch.nn as nn
 
 # Actor Critic Agent
 class ACAgent(nn.Module):
-    def __init__(self, policy_net, value_net, *args):
+    def __init__(self, policy_net, value_net,
+                 target_policy_net, target_value_net,
+                 optimizer_fn, *args):
         super(ACAgent, self).__init__()
         # policy net
         self.policy = policy_net
+        self.target_policy = target_policy_net
+        self.policy_opt = optimizer_fn(
+            params=filter(lambda p: p.requires_grad, self.policy.parameters()),
+            lr=self.policy.learning_rate)
         # value net
         self.value = value_net
+        self.target_value = target_value_net
+        self.value_opt = optimizer_fn(
+            params=filter(lambda p: p.requires_grad, self.value.parameters()),
+            lr=self.value.learning_rate)
 
     def save(self, dir):
         torch.save(
@@ -21,7 +31,7 @@ class ACAgent(nn.Module):
         )
         torch.save(
             self.value.state_dict(),
-            '{}/{}.critic.pkl'.format(dir, self.name)
+            '{}/{}.value.pkl'.format(dir, self.name)
         )
 
     def load(self, dir):

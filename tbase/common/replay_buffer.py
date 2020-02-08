@@ -33,16 +33,16 @@ class ReplayBuffer(object):
             self._storage[self._next_idx] = data
         self._next_idx = (self._next_idx + 1) % self._maxsize
 
-    def _encode_sample(self, idxes, agent_idx):
+    def _encode_sample(self, idxes):
         obses_t, actions, rewards, obses_tp1, dones = [], [], [], [], []
         for i in idxes:
             data = self._storage[i]
             obs_t, action, reward, obs_tp1, done = data
             obses_t.append(obs_t)
             actions.append(action)
-            rewards.append(reward[agent_idx])
+            rewards.append(reward)
             obses_tp1.append(obs_tp1)
-            dones.append(done[agent_idx])
+            dones.append(done)
         return np.array(obses_t), np.array(actions), np.array(rewards), \
             np.array(obses_tp1), np.array(dones)
 
@@ -59,7 +59,7 @@ class ReplayBuffer(object):
     def sample_index(self, idxes):
         return self._encode_sample(idxes)
 
-    def sample(self, batch_size, agent_idx):
+    def sample(self, batch_size):
         """Sample a batch of experiences.
 
         Parameters
@@ -85,7 +85,7 @@ class ReplayBuffer(object):
             idxes = self.make_index(batch_size)
         else:
             idxes = range(0, len(self._storage))
-        return self._encode_sample(idxes, agent_idx)
+        return self._encode_sample(idxes)
 
     def collect(self):
         return self.sample(-1)

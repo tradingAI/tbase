@@ -8,7 +8,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 def fc(in_features, out_features):
     layer = nn.Linear(in_features, out_features)
     nn.init.xavier_normal_(layer.weight)
-    # 默认为随机初始化
     nn.init.constant_(layer.bias, 0)
     return layer
 
@@ -34,3 +33,8 @@ def soft_update(target, source, tau):
                                           source.parameters()):
         target_param.data.copy_(
             (1 - tau) * target_param.data + tau * source_param.data)
+
+
+def clear_memory():
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()

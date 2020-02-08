@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -41,22 +43,21 @@ class LSTM_MLP(BasePolicy):
         return h_0, c_0
 
     def action(self, obs, with_reg=False):
-        # state: seq_len, batch_size, input_size
+        # obs: seq_len, batch_size, input_size
         h_0, c_0 = self.init_hidden(obs.shape[1])
         output, _ = self.rnn(obs, (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
-        action = self.activation(self.fc_output(encoded))
+        action = self.activation(self.fc2(encoded))
         if with_reg:
             return action, encoded
         return action
 
     def select_action(self, obs):
-        # state: seq_len, batch_size, input_size
-        np_obs = np.array([obs])
-        th_obs = torch.from_numpy(np_obs).to(self.device, torch.float)
-        action = self.action(th_obs, with_reg=False)
+        # obs: seq_len, batch_size, input_size
+        action = self.action(obs, with_reg=False)
         action = action.detach().cpu()[0].numpy()
         # TODO: 确定随机过程写法是否正确
         action += self.random_process.sample()
+        action = np.clip(action, self.action_low, self.action_high)
         return action

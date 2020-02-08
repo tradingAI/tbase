@@ -53,7 +53,7 @@ def common_arg_parser():
     # 环境
     parser.add_argument('--scenario', help='environment scenario', type=str,
                         default='multi_vol')
-    parser.add_argument("--codes", type=str, default="000001.SZ,000002.SZ",
+    parser.add_argument("--codes", type=str, default="000001.SZ",
                         help="tushare code of the experiment stocks")
     parser.add_argument("--indexs", type=str, default="000001.SH,399001.SZ",
                         help="tushare code of the indexs")
@@ -71,15 +71,30 @@ def common_arg_parser():
                         help='Number of environment copies run in parallel.')
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
-    parser.add_argument('--alg', help='Algorithm', type=str, default='ppo2')
+    parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
+    parser.add_argument("--gamma", type=float, default=0.75,
+                        help="discount factor")
+    parser.add_argument("--max_grad_norm", type=float, default=1,
+                        help="max gradient norm for clip")
+    parser.add_argument("--tau", type=int, default=0.01,
+                        help="how depth we exchange the parameters of the nn")
     parser.add_argument('--max_episode', type=float, default=1000)
+    parser.add_argument('--explore_size', type=int, default=100)
+    parser.add_argument('--sample_size', type=int, default=100)
+    parser.add_argument('--warm_up', type=int, default=1000)
+    parser.add_argument('--model_dir', help='dir to save trained model',
+                        default="/tmp/tbase/models", type=str)
+    parser.add_argument('--max-iter-num', type=int, default=500, metavar='N',
+                        help='maximal number of main iterations (default:500)')
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+                        help='interval between training status(default:10)')
+    parser.add_argument('--save-model-interval', type=int, default=5)
     # 模型参数
     parser.add_argument('--policy_net', default=None,
                         help='network type (mlp, lstm, cnn_lstm)')
     parser.add_argument('--value_net', default=None,
                         help='network type (mlp, lstm_mpl)')
-    parser.add_argument('--save_path', help='Path to save trained model to',
-                        default=None, type=str)
+
     parser.add_argument('--log_path', default=None, type=str,
                         help='Directory to save learning curve data.')
     # 运行参数
