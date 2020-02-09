@@ -37,9 +37,9 @@ class LSTM_MLP(BasePolicy):
 
     def init_hidden(self, batch_size):
         h_0 = Variable(torch.randn(self.num_layers, batch_size,
-                       self.hidden_size)).to(self.device, torch.float)
+                       self.hidden_size))
         c_0 = Variable(torch.randn(self.num_layers, batch_size,
-                       self.hidden_size)).to(self.device, torch.float)
+                       self.hidden_size))
         return h_0, c_0
 
     def action(self, obs, with_reg=False):
