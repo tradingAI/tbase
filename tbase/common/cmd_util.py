@@ -82,7 +82,7 @@ def common_arg_parser():
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
     parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
-    parser.add_argument("--gamma", type=float, default=0.0,
+    parser.add_argument("--gamma", type=float, default=0.75,
                         help="discount factor")
     parser.add_argument("--max_grad_norm", type=float, default=5,
                         help="max gradient norm for clip")

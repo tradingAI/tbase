@@ -1,4 +1,0 @@
-env: average
-alg: ddpg
-policy: lstm_mlp
-value: lstm_merge_mlp
