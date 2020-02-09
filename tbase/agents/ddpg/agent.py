@@ -86,6 +86,7 @@ class Agent(ACAgent):
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
+        self.policy.share_memory()
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
                            self.memorys[i], self.policy, thread_size)
