@@ -1,12 +1,12 @@
 # -*- coding:utf-8 -*-
 import math
-import multiprocessing
 import os
 import random
 import time
 
 import numpy as np
 import torch
+import torch.multiprocessing as mp
 import torch.nn as nn
 
 from tbase.common.agent import ACAgent
@@ -82,15 +82,14 @@ class Agent(ACAgent):
     # 探索与搜集samples
     def explore(self, explore_size, sample_size):
         t_start = time.time()
-        queue = multiprocessing.Queue()
+        queue = mp.Queue()
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
                            self.memorys[i], self.policy, thread_size)
-            workers.append(multiprocessing.Process(target=explore,
-                                                   args=worker_args))
+            workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
             worker.start()
 
