@@ -1,0 +1,4 @@
+alg: ddpg
+env: abc
+policy: lstm_mlp
+value: lstm_merge_mlp

@@ -36,11 +36,14 @@ def make_env(args):
             codes=codes,
             indexs=indexs,
             data_dir=args.data_dir)
+    used_infos = ["equities_hfq_info", "indexs_info"]
     env = _make_env(
         scenario=args.scenario,
         market=m,
         investment=args.investment,
-        look_back_days=args.look_back_days)
+        look_back_days=args.look_back_days,
+        used_infos=used_infos,
+        reward_fn=args.reward_fn)
     return env
 
 
@@ -52,7 +55,7 @@ def common_arg_parser():
     parser = argparse.ArgumentParser("reinforcement learning trade agents")
     # 环境
     parser.add_argument('--scenario', help='environment scenario', type=str,
-                        default='multi_vol')
+                        default='average')
     parser.add_argument("--codes", type=str, default="000001.SZ",
                         help="tushare code of the experiment stocks")
     parser.add_argument("--indexs", type=str, default="000001.SH,399001.SZ",
@@ -69,34 +72,38 @@ def common_arg_parser():
                         help="directory for tgym store trade data")
     parser.add_argument('--num_env', default=2, type=int,
                         help='Number of environment copies run in parallel.')
-    # 训练参数
-    parser.add_argument('--seed', help='RNG seed', type=int, default=None)
-    parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
-    parser.add_argument("--gamma", type=float, default=0.75,
-                        help="discount factor")
-    parser.add_argument("--max_grad_norm", type=float, default=5,
-                        help="max gradient norm for clip")
-    parser.add_argument("--tau", type=int, default=0.99,
-                        help="how depth we exchange the parameters of the nn")
-    parser.add_argument('--max_episode', type=float, default=1000)
-    parser.add_argument('--explore_size', type=int, default=200)
-    parser.add_argument('--sample_size', type=int, default=200)
-    parser.add_argument('--warm_up', type=int, default=10000)
-    parser.add_argument('--model_dir', help='dir to save trained model',
-                        default="/tmp/tbase/models", type=str)
-    parser.add_argument('--max-iter-num', type=int, default=500, metavar='N',
-                        help='maximal number of main iterations (default:500)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='interval between training status(default:10)')
-    parser.add_argument('--save-model-interval', type=int, default=5)
     # 模型参数
     parser.add_argument('--policy_net', default=None,
                         help='network type (mlp, lstm, cnn_lstm)')
     parser.add_argument('--value_net', default=None,
                         help='network type (mlp, lstm_mpl)')
+    parser.add_argument('--reward_fn', default="daily_return_add_price_bound",
+                        help='reward function')
+    # 训练参数
+    parser.add_argument('--seed', help='RNG seed', type=int, default=None)
+    parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
+    parser.add_argument("--gamma", type=float, default=0.0,
+                        help="discount factor")
+    parser.add_argument("--max_grad_norm", type=float, default=5,
+                        help="max gradient norm for clip")
+    parser.add_argument("--tau", type=int, default=0.95,
+                        help="how depth we exchange the parameters of the nn")
+    parser.add_argument('--explore_size', type=int, default=400)
+    parser.add_argument('--sample_size', type=int, default=200)
+    parser.add_argument('--warm_up', type=int, default=10000)
 
-    parser.add_argument('--log_path', default=None, type=str,
+    parser.add_argument('--max-iter-num', type=int, default=10000, metavar='N',
+                        help='maximal number of main iterations (default:500)')
+    # 输出相关
+    parser.add_argument('--model_dir', help='dir to save trained model',
+                        default="/tmp/tbase/models", type=str)
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+                        help='interval between training status(default:10)')
+    parser.add_argument('--save-model-interval', type=int, default=5)
+    parser.add_argument('--tensorboard_dir', default='/tmp/tbase/tensorboard',
+                        type=str,
                         help='Directory to save learning curve data.')
+    parser.add_argument('--log-action', default=False, action='store_true')
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')
     return parser.parse_args()

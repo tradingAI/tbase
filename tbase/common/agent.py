@@ -3,13 +3,14 @@ import os
 
 import torch
 import torch.nn as nn
+from torch.utils.tensorboard import SummaryWriter
 
 
 # Actor Critic Agent
 class ACAgent(nn.Module):
     def __init__(self, policy_net, value_net,
                  target_policy_net, target_value_net,
-                 optimizer_fn, *args):
+                 optimizer_fn, log_dir, *args):
         super(ACAgent, self).__init__()
         # policy net
         self.policy = policy_net
@@ -23,6 +24,7 @@ class ACAgent(nn.Module):
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
             lr=self.value.learning_rate)
+        self.writer = SummaryWriter(log_dir=log_dir)
 
     def save(self, dir):
         torch.save(

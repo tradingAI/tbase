@@ -1,0 +1,4 @@
+alg: 13
+env: average
+policy: lstm_mlp
+value: lstm_merge_mlp

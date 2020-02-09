@@ -52,6 +52,23 @@ class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
         self.x_prev = self.x0 if self.x0 is not None else np.zeros(self.size)
 
 
+class GaussianProcess:
+    def __init__(self, mu=0., sigma=0.5, size=1, decay=0.9, decay_steps=10000):
+        self.mu = mu
+        self.sigma = sigma
+        self.size = size
+        self.decay = decay
+        self.decay_steps = decay_steps
+        self.n_steps = 0
+
+    def sample(self):
+        self.n_steps += 1
+        if self.n_steps % self.decay_steps == 0:
+            self.sigma = self.sigma * self.decay
+        x = np.random.normal(loc=self.mu, scale=self.sigma, size=self.size)
+        return x
+
+
 if __name__ == '__main__':
     ou = OrnsteinUhlenbeckProcess(0.1, size=4)
     states = []

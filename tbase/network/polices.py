@@ -12,7 +12,7 @@ from tbase.network.base import BasePolicy
 
 class LSTM_MLP(BasePolicy):
     def __init__(self, seq_len=11, input_size=10, hidden_size=300,
-                 output_size=4, num_layers=1, dropout=0.0, learning_rate=0.01,
+                 output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
                  fc_size=200, activation=None, ou_theta=0.15,
                  ou_sigma=0.2, ou_mu=0):
         super(LSTM_MLP, self).__init__()
@@ -29,7 +29,7 @@ class LSTM_MLP(BasePolicy):
         self.fc1 = fc(hidden_size, fc_size)
         self.fc2 = fc(fc_size, output_size)
         if activation is None:
-            self.activation = nn.LeakyReLU(0.01)
+            self.activation = nn.Tanh()
         else:
             self.activation = activation
         self.random_process = OrnsteinUhlenbeckProcess(
@@ -57,7 +57,6 @@ class LSTM_MLP(BasePolicy):
         # obs: seq_len, batch_size, input_size
         action = self.action(obs, with_reg=False)
         action = action.detach().cpu()[0].numpy()
-        # TODO: 确定随机过程写法是否正确
         action += self.random_process.sample()
         action = np.clip(action, self.action_low, self.action_high)
         return action

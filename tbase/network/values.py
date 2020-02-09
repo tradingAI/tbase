@@ -29,7 +29,7 @@ class LSTM_Merge_MLP(BaseNet):
         self.fc3 = fc(rnn_hidden_size + act_fc2_size, output_size)
 
         if activation is None:
-            self.activation = nn.LeakyReLU(0.01)
+            self.activation = nn.Tanh()
         else:
             self.activation = activation
 
