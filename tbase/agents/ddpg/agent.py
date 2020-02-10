@@ -29,7 +29,7 @@ def explore(pid, queue, env, state, memory, policy, size):
         with torch.no_grad():
             action = policy.select_action(state_var)
         action = action.astype(np.float)
-        if random.random() < 0.01:
+        if random.random() < 0.001:
             print(action)
         next_state, reward, done, info, _ = env.step(action)
         memory.add(state, action, reward, next_state, done)

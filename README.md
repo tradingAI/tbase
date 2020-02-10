@@ -17,6 +17,10 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 # Features(开发中, 欢迎一起完善)
 
 - [ ] GPU 加速
+
+  - [ ] 多进程单GPU并行
+  - [ ] 多进程多GPU并行
+
 - [ ] 支持多进程方式运行 Enviroment
 - [ ] 支持单Agent与多Agent, 例如: MADDPG
 - [ ] 通过运行参数选择:
