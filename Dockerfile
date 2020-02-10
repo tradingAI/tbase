@@ -41,6 +41,8 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com \
     tushare gym torch matplotlib
+# tensorboard
+RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com tensorflow tensorboard
 
 ENV CODE_DIR /root/trade
 
