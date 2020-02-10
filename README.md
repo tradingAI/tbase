@@ -75,6 +75,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - max_iter_num: "500", 训练轮数
 - num_env: "2", 并行进程数
 - seed: None, 系统随机种子
+- print_action: False, 随机打印action的值，方便查看action分布状况
 - [其他参数](tbase/common/cmd_util.py)
 
 ```
