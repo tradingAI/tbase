@@ -19,7 +19,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 ## Local
 
-安装步聚参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
+安装步骤参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
 
 # Features(开发中, 欢迎一起完善)
 
