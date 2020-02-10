@@ -16,25 +16,26 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 # Features(开发中, 欢迎一起完善)
 
-- [ ] GPU 加速
+- [ ] 加速
 
+  - [x] 多进程CPU并行: 多进程运行独立的Enviroment进行探索
   - [ ] 多进程单GPU并行
   - [ ] 多进程多GPU并行
 
-- [ ] 支持多进程方式运行 Enviroment
 - [ ] 支持单Agent与多Agent, 例如: MADDPG
+
 - [ ] 通过运行参数选择:
 
-  - [ ] 环境
-  - [ ] 算法
-  - [ ] Policy-Net
-  - [ ] Value-Net
+  - [x] 环境
+  - [x] 算法
+  - [x] Policy-Net
+  - [x] Value-Net
 
 - 支持RL算法:
 
   - [ ] One Agent
 
-    - [ ] DDPG
+    - [x] DDPG
     - [ ] Dueling DDPG
     - [ ] A2C
     - [ ] PPO
@@ -49,10 +50,12 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 - 自定义Net
 
+  - [x] LSTM-MLP
+  - [x] LSTM_Merge_MLP
   - [ ] MLP
   - [ ] LSTM
   - [ ] CNN
-  - [ ] LSTM-MLP
+
   - [ ] CNN-MLP
 
 # 训练与保存模型
