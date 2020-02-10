@@ -2,6 +2,8 @@
 
 Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 
+线上交流QQ群: 451958126
+
 支持环境： python3(>=3.5)
 
 # 安装
