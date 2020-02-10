@@ -94,8 +94,8 @@ def common_arg_parser():
     parser.add_argument('--sample_size', type=int, default=200)
     parser.add_argument('--warm_up', type=int, default=10000)
 
-    parser.add_argument('--max-iter-num', type=int, default=10000, metavar='N',
-                        help='maximal number of main iterations (default:500)')
+    parser.add_argument('--max_iter_num', type=int, default=100, metavar='N',
+                        help='maximal number of main iterations (default:100)')
     # 输出相关
     parser.add_argument('--model_dir', help='dir to save trained model',
                         default="/tmp/tbase/models", type=str)
