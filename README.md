@@ -12,7 +12,14 @@ Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
-[docker install](https://docs.docker.com/install/)
+## Docker Image
+
+1. [docker install](https://docs.docker.com/install/)
+2. `bash build.sh`
+
+## Local
+
+安装步聚参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
 
 # Features(开发中, 欢迎一起完善)
 
