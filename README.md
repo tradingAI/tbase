@@ -2,8 +2,6 @@
 
 Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 
-线上交流QQ群: 451958126
-
 支持环境： python3(>=3.5)
 
 # 安装
@@ -111,3 +109,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --seed 9
 - [ ] 最大回撤: 在选定周期内任一历史时点往后推，产品净值走到最低点时的收益率回撤幅度的最大值
 
 - [ ] 夏普比率: 投资组合每承受一单位总风险，会产生多少的超额报酬
+
+# 线上交流方式
+
+- QQ群: 451958126
