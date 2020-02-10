@@ -73,11 +73,12 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - start: "20190101", 训练开始时间
 - end: "201901231", 训练结束时间
 - max_iter_num: "500", 训练轮数
-- num_env: "2"， 并行进程数
+- num_env: "2", 并行进程数
+- seed: None, 系统随机种子
 - [其他参数](tbase/common/cmd_util.py)
 
 ```
-python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
+python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --seed 9
 ```
 
 运行tensorboard
