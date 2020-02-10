@@ -57,11 +57,15 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] CNN
   - [ ] CNN-MLP
 
-# 训练与保存模型
+# 训练
+
+例如 ddpg:
+
+`python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily_return_with_chl_penalty --gamma 0.4 --seed 9`
 
 # 模型评估
 
-- [ ] 绝对收益率(Absolute Return)
+- [x] 绝对收益率(Absolute Return)
 - [ ] 额外收益率(Excess Return)
 
   - [ ] 相对于"买入持有"策略
