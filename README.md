@@ -84,7 +84,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --max_iter_num 500
 
 `tensorboard --logdir=/tmp/tbase/tensorboard`
 
-可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, ,portfolio, time等指标
+可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward ,portfolio, time等指标
 
 ![loss](images/loss.png)![reward](images/reward.png)
 
