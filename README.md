@@ -112,4 +112,4 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --seed 9
 
 线上交流方式
 
-- QQ群: 451958126
+- QQ群: 477860214
