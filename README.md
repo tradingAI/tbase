@@ -61,15 +61,25 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 例如 ddpg:
 
-`python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily_return_with_chl_penalty --gamma 0.4 --seed 9`
+```
+python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily_return_with_chl_penalty --gamma 0.4 --seed 9
+```
 
 运行tensorboard
 
 `tensorboard --logdir=/tmp/tbase/tensorboard`
 
-可以在[http://localhost:6006](http://localhost:6006/)中查看地训练的相关指标
+可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, time等指标
 
-# 模型评估
+# 加载模型
+
+# 评估
+
+## 滑动窗口更新模型
+
+在评估周期内，每隔一个窗口T，重新训练一次模型，当T>评估周期时，等价于固定模型
+
+## 评估指标
 
 - [x] 绝对收益率(Absolute Return)
 - [ ] 额外收益率(Excess Return)
@@ -80,5 +90,3 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - [ ] 最大回撤: 在选定周期内任一历史时点往后推，产品净值走到最低点时的收益率回撤幅度的最大值
 
 - [ ] 夏普比率: 投资组合每承受一单位总风险，会产生多少的超额报酬
-
-# 加载模型
