@@ -55,7 +55,6 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] MLP
   - [ ] LSTM
   - [ ] CNN
-
   - [ ] CNN-MLP
 
 # 训练与保存模型
