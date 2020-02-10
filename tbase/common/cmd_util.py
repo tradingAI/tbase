@@ -105,7 +105,7 @@ def common_arg_parser():
     parser.add_argument('--tensorboard_dir', default='/tmp/tbase/tensorboard',
                         type=str,
                         help='Directory to save learning curve data.')
-    parser.add_argument('--log-action', default=False, action='store_true')
+    parser.add_argument('--print_action', default=False, action='store_true')
     parser.add_argument('--debug', default=False, action='store_true')
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')

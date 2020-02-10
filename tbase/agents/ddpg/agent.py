@@ -19,7 +19,7 @@ from tbase.network.values import LSTM_Merge_MLP
 
 
 # 擦索env,将Transitions存入memory
-def explore(pid, queue, env, state, memory, policy, size):
+def explore(pid, queue, env, state, memory, policy, size, print_actions):
     num_steps = 0
     rewards = []
     portfolios = []
@@ -29,8 +29,9 @@ def explore(pid, queue, env, state, memory, policy, size):
         with torch.no_grad():
             action = policy.select_action(state_var)
         action = action.astype(np.float)
-        if random.random() < 0.001:
-            print(action)
+        if print_actions:
+            if random.random() < 0.001:
+                print("tbase.agents.ddpg.agent explore action:" + str(action))
         next_state, reward, done, info, _ = env.step(action)
         memory.add(state, action, reward, next_state, done)
         rewards.append(reward)
@@ -88,7 +89,8 @@ class Agent(ACAgent):
         workers = []
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
-                           self.memorys[i], self.policy.to('cpu'), thread_size)
+                           self.memorys[i], self.policy.to('cpu'), thread_size,
+                           self.args.print_action)
             workers.append(multiprocessing.Process(target=explore,
                                                    args=worker_args))
         for worker in workers:
@@ -175,6 +177,7 @@ class Agent(ACAgent):
         logger.info("warm up: %d finished" % self.args.warm_up)
         logger.info("learning started")
         i = 0
+        current_portfolio = 1.0
         for i_iter in range(self.args.max_iter_num):
             obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore(
                 explore_size=self.args.explore_size,
@@ -182,6 +185,7 @@ class Agent(ACAgent):
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
+                current_portfolio = p
             self.writer.add_scalar('time/explore', e_t, i_iter)
             v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
                 obs, act, rew, obs_t, done)
@@ -194,7 +198,8 @@ class Agent(ACAgent):
                                    torch.tensor(avg_reward), i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
-                logger.info("iter=%d, avg_reward=%.3f" % (i_iter, avg_reward))
+                logger.info("iter=%d,avg_reward=%.3f,last_portfolio: %.3f" % (
+                    i_iter, avg_reward, current_portfolio))
 
             if (i_iter + 1) % self.args.save_model_interval == 0:
                 self.save(self.model_dir)
