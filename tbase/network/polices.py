@@ -60,3 +60,18 @@ class LSTM_MLP(BasePolicy):
         action += self.random_process.sample()
         action = np.clip(action, self.action_low, self.action_high)
         return action
+
+
+def get_policy_net(env, args):
+    if args.policy_net == "LSTM_MLP":
+        seq_len = args.look_back_days
+        input_size = env.input_size
+        act_size = env.action_space
+        # TODO:
+        return LSTM_MLP(
+            seq_len=seq_len, input_size=input_size, hidden_size=300,
+            output_size=act_size, num_layers=1, dropout=0.0,
+            learning_rate=0.001, fc_size=200, activation=None,
+            ou_theta=0.15, ou_sigma=0.2, ou_mu=0)
+    else:
+        raise "Not implement policy_net network: %s" % args.value_net

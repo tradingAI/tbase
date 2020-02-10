@@ -69,7 +69,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 例如 ddpg:
 
 ```
-python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily_return_with_chl_penalty --gamma 0.4 --seed 9
+python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
 ```
 
 运行tensorboard
@@ -77,6 +77,9 @@ python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily
 `tensorboard --logdir=/tmp/tbase/tensorboard`
 
 可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, time等指标
+
+<figure class="half"><img src="images/loss.png">
+  <img src="images/reward.png"></figure>
 
 # 加载模型
 

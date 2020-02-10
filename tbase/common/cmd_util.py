@@ -58,8 +58,10 @@ def common_arg_parser():
                         default='average')
     parser.add_argument("--codes", type=str, default="000001.SZ",
                         help="tushare code of the experiment stocks")
-    parser.add_argument("--indexs", type=str, default="000001.SH,399001.SZ",
-                        help="tushare code of the indexs")
+    parser.add_argument(
+        "--indexs", type=str, default="000001.SH,399001.SZ",
+        help="tushare code of the indexs, 000001.SH:沪指, \
+        399001.SZ: 深指, detal:https://tushare.pro/document/2?doc_id=94")
     parser.add_argument("--start", type=str, default='20190101',
                         help="when start the game")
     parser.add_argument("--end", type=str, default='20191231',
@@ -70,19 +72,19 @@ def common_arg_parser():
                         help="how many days shoud look back")
     parser.add_argument("--data_dir", type=str, default='/tmp/tgym',
                         help="directory for tgym store trade data")
-    parser.add_argument('--num_env', default=2, type=int,
+    parser.add_argument('--num_env', default=4, type=int,
                         help='Number of environment copies run in parallel.')
     # 模型参数
-    parser.add_argument('--policy_net', default=None,
-                        help='network type (mlp, lstm, cnn_lstm)')
-    parser.add_argument('--value_net', default=None,
-                        help='network type (mlp, lstm_mpl)')
+    parser.add_argument('--policy_net', default='LSTM_MLP',
+                        help='network type (LSTM_MLP)')
+    parser.add_argument('--value_net', default='LSTM_Merge_MLP',
+                        help='network type (LSTM_Merge_MLP)')
     parser.add_argument('--reward_fn', default="daily_return_add_price_bound",
                         help='reward function')
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
     parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
-    parser.add_argument("--gamma", type=float, default=0.75,
+    parser.add_argument("--gamma", type=float, default=0.5,
                         help="discount factor")
     parser.add_argument("--max_grad_norm", type=float, default=5,
                         help="max gradient norm for clip")
@@ -104,6 +106,7 @@ def common_arg_parser():
                         type=str,
                         help='Directory to save learning curve data.')
     parser.add_argument('--log-action', default=False, action='store_true')
+    parser.add_argument('--debug', default=False, action='store_true')
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')
     return parser.parse_args()

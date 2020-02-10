@@ -203,9 +203,10 @@ class Agent(ACAgent):
 
 
 def main():
-    # import logging
-    # logger.setLevel(logging.DEBUG)
     args = common_arg_parser()
+    if args.debug:
+        import logging
+        logger.setLevel(logging.DEBUG)
     env = make_env(args=args)
     input_size = env.input_size
     act_size = env.action_space
