@@ -78,8 +78,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
 
 可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, time等指标
 
-<figure class="half"><img src="images/loss.png">
-  <img src="images/reward.png"></figure>
+![loss](images/loss.png)![reward](images/reward.png)
 
 # 加载模型
 
