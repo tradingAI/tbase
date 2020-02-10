@@ -72,12 +72,12 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - indexs: "000001.SH,399001.SZ", [000001.SH:沪指, 399001.SZ: 深指](https://tushare.pro/document/2?doc_id=94)
 - start: "20190101", 训练开始时间
 - end: "201901231", 训练结束时间
-- max_iter_num: "100", 训练轮数
+- max_iter_num: "500", 训练轮数
 - num_env: "2"， 并行进程数
 - [其他参数](tbase/common/cmd_util.py)
 
 ```
-python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --max_iter_num 500
+python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
 ```
 
 运行tensorboard

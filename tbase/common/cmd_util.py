@@ -72,7 +72,7 @@ def common_arg_parser():
                         help="how many days shoud look back")
     parser.add_argument("--data_dir", type=str, default='/tmp/tgym',
                         help="directory for tgym store trade data")
-    parser.add_argument('--num_env', default=4, type=int,
+    parser.add_argument('--num_env', default=2, type=int,
                         help='Number of environment copies run in parallel.')
     # 模型参数
     parser.add_argument('--policy_net', default='LSTM_MLP',
@@ -94,8 +94,8 @@ def common_arg_parser():
     parser.add_argument('--sample_size', type=int, default=200)
     parser.add_argument('--warm_up', type=int, default=10000)
 
-    parser.add_argument('--max_iter_num', type=int, default=100, metavar='N',
-                        help='maximal number of main iterations (default:100)')
+    parser.add_argument('--max_iter_num', type=int, default=500, metavar='N',
+                        help='maximal number of main iterations')
     # 输出相关
     parser.add_argument('--model_dir', help='dir to save trained model',
                         default="/tmp/tbase/models", type=str)
