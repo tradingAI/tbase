@@ -63,6 +63,12 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 `python3 -m tbase.agents.ddpg.agent --warm_up 12000 --num_env 6 --reward_fn daily_return_with_chl_penalty --gamma 0.4 --seed 9`
 
+运行tensorboard
+
+`tensorboard --logdir=/tmp/tbase/tensorboard`
+
+可以在[http://localhost:6006](http://localhost:6006/)中查看地训练的相关指标
+
 # 模型评估
 
 - [x] 绝对收益率(Absolute Return)
