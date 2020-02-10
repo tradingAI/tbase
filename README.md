@@ -66,7 +66,13 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 # 训练
 
-例如 ddpg:
+例如 ddpg 默认参数:
+
+- codes: "000001.SZ", 平安银行
+- indexs: "000001.SH,399001.SZ", [000001.SH:沪指, 399001.SZ: 深指](https://tushare.pro/document/2?doc_id=94)
+- start: "20190101", 训练开始时间
+- end: "201901231", 训练结束时间
+- [其他参数](tbase/common/cmd_util.py)
 
 ```
 python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
@@ -76,7 +82,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5
 
 `tensorboard --logdir=/tmp/tbase/tensorboard`
 
-可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, time等指标
+可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward, ,portfolio, time等指标
 
 ![loss](images/loss.png)![reward](images/reward.png)
 
