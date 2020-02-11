@@ -1,6 +1,6 @@
 # tbase
 
-Baselines of trade agents use reinforcement learning algorithms(PyTorch).
+Baselines of reinforcement learning trading agents(PyTorch based).
 
 支持环境： python3(>=3.5)
 
@@ -12,12 +12,26 @@ Baselines of trade agents use reinforcement learning algorithms(PyTorch).
 export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
-**1\. Docker Image**
+**1\. Docker**
 
 - [docker install](https://docs.docker.com/install/)
 - `bash build.sh`
+- docker run -it aiminders/trade bash
 
-**2\. Local**
+**2\. Mac OS**
+
+- 依赖: python3, pip
+- [tgym](https://github.com/iminders/tgym)
+- tbase
+
+  ```
+  git clone https://github.com/iminders/tbase
+  cd tbase
+  pip install -r requirements.txt
+  pip install -e .
+  ```
+
+**3\. Ubuntu**
 
 - 安装步骤参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
 
@@ -29,7 +43,10 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] 多进程单GPU并行
   - [ ] 多进程多GPU并行
 
-- [ ] 支持单Agent与多Agent, 例如: MADDPG
+- [ ] 支持单Agent与多Agent
+
+  - [x] 单Agent
+  - [ ] 多Agent
 
 - [x] 通过运行参数选择:
 
@@ -109,6 +126,11 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --seed 9
 - [ ] 最大回撤: 在选定周期内任一历史时点往后推，产品净值走到最低点时的收益率回撤幅度的最大值
 
 - [ ] 夏普比率: 投资组合每承受一单位总风险，会产生多少的超额报酬
+
+# 待优化
+
+- [ ] bazel build
+- [ ] unittest 补齐
 
 线上交流方式
 

@@ -172,6 +172,7 @@ class Agent(ACAgent):
         logger.info("learning started")
         i = 0
         current_portfolio = 1.0
+        t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
             obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore(
                 explore_size=self.args.explore_size,
@@ -192,8 +193,9 @@ class Agent(ACAgent):
                                    torch.tensor(avg_reward), i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
-                logger.info("iter=%d,avg_reward=%.3f,last_portfolio: %.3f" % (
-                    i_iter, avg_reward, current_portfolio))
+                logger.info("time: %.3f, iter=%d, avg_reward=%.3f, last_portfolio: %.3f" % (
+                    time.time() - t_start, i_iter,
+                    avg_reward, current_portfolio))
 
             if (i_iter + 1) % self.args.save_model_interval == 0:
                 self.save(self.model_dir)
