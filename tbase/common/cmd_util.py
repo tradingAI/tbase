@@ -16,6 +16,7 @@ def set_global_seeds(seed):
         torch.cuda.manual_seed(seed)
         torch.backends.cudnn.deterministic = True
     except ImportError:
+        print("import torch error, expected torch")
         pass
     np.random.seed(seed)
     random.seed(seed)
@@ -43,7 +44,8 @@ def make_env(args):
         investment=args.investment,
         look_back_days=args.look_back_days,
         used_infos=used_infos,
-        reward_fn=args.reward_fn)
+        reward_fn=args.reward_fn,
+        log_deals=args.log_deals)
     return env
 
 
@@ -107,6 +109,7 @@ def common_arg_parser():
                         help='Directory to save learning curve data.')
     parser.add_argument('--print_action', default=False, action='store_true')
     parser.add_argument('--debug', default=False, action='store_true')
+    parser.add_argument('--log_deals', default=False, action='store_true')
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')
     return parser.parse_args()
