@@ -90,7 +90,7 @@ def common_arg_parser():
     parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
     parser.add_argument('--opt_fn', type=str, default='RMSprop',
                         help='optimizer function')
-    parser.add_argument("--gamma", type=float, default=0.5,
+    parser.add_argument("--gamma", type=float, default=0.53,
                         help="discount factor")
     parser.add_argument("--max_grad_norm", type=float, default=5,
                         help="max gradient norm for clip")

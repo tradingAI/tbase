@@ -96,7 +96,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - [其他参数](tbase/common/cmd_util.py)
 
 ```
-python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.5 --seed 9
+python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 ```
 
 运行tensorboard
