@@ -5,13 +5,20 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
+from tbase.common.torch_utils import opt_fn
+from tbase.network.polices import get_policy_net
+from tbase.network.values import get_value_net
+
 
 # Actor Critic Agent
 class ACAgent(nn.Module):
-    def __init__(self, policy_net, value_net,
-                 target_policy_net, target_value_net,
-                 optimizer_fn, log_dir, *args):
+    def __init__(self, env, args, *other_args):
         super(ACAgent, self).__init__()
+        policy_net = get_policy_net(env, args)
+        target_policy_net = get_policy_net(env, args)
+        value_net = get_value_net(env, args)
+        target_value_net = get_value_net(env, args)
+        optimizer_fn = opt_fn(args.opt_fn)
         # policy net
         self.policy = policy_net
         self.target_policy = target_policy_net
@@ -24,7 +31,7 @@ class ACAgent(nn.Module):
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
             lr=self.value.learning_rate)
-        self.writer = SummaryWriter(log_dir=log_dir)
+        self.writer = SummaryWriter(log_dir=args.tensorboard_dir)
 
     def save(self, dir):
         torch.save(

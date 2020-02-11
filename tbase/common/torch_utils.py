@@ -28,6 +28,18 @@ def to_device(device, *args):
     return [x.to(device) for x in args]
 
 
+def opt_rmsprop(params, lr):
+    return torch.optim.RMSprop(params, lr)
+
+
+def opt_fn(name="RMSprop"):
+    if name == "RMSprop":
+        return opt_rmsprop
+    else:
+        raise Exception(
+            "tbase.common.torch_utils opt_fn: NotImplementedError %s " % name)
+
+
 def soft_update(target, source, tau):
     for target_param, source_param in zip(target.parameters(),
                                           source.parameters()):

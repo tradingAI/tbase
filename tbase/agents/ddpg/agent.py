@@ -45,14 +45,8 @@ def explore(pid, queue, env, state, memory, policy, size, print_actions):
 
 
 class Agent(ACAgent):
-    def __init__(self, policy_net=None, value_net=None,
-                 target_policy_net=None, target_value_net=None,
-                 n_codes=1, optimizer_fn=None, tensorboard_dir=None,
-                 args=None):
-        super(Agent, self).__init__(
-            policy_net, value_net,
-            target_policy_net, target_value_net,
-            optimizer_fn, tensorboard_dir, args)
+    def __init__(self, env=None, args=None):
+        super(Agent, self).__init__(env, args)
         self.args = args
         self.name = self.get_agent_name()
         self.model_dir = self.get_model_dir()
@@ -154,7 +148,7 @@ class Agent(ACAgent):
         # loss_a 表示 value对action的评分负值（-Q值)
         loss_a = torch.mul(-1, torch.mean(self.value.forward(obs, action_new)))
         loss_reg = torch.mean(torch.pow(model_out, 2))
-        act_reg = torch.mean(torch.pow(action_new, 2)) * 3
+        act_reg = torch.mean(torch.pow(action_new, 2))
         policy_loss = loss_reg + loss_a + act_reg
 
         # print(action_new.detach().cpu().numpy().tolist())

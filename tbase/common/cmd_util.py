@@ -10,7 +10,11 @@ from tgym.scenario import make_env as _make_env
 
 
 def set_global_seeds(seed):
+    np.random.seed(seed)
+    random.seed(seed)
     try:
+        if seed is None:
+            seed = np.random.randint(int(1e6))
         import torch
         torch.manual_seed(seed)
         torch.cuda.manual_seed(seed)
@@ -18,8 +22,6 @@ def set_global_seeds(seed):
     except ImportError:
         print("import torch error, expected torch")
         pass
-    np.random.seed(seed)
-    random.seed(seed)
 
 
 def make_env(args):
@@ -86,6 +88,8 @@ def common_arg_parser():
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
     parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')
+    parser.add_argument('--opt_fn', type=str, default='RMSprop',
+                        help='optimizer function')
     parser.add_argument("--gamma", type=float, default=0.5,
                         help="discount factor")
     parser.add_argument("--max_grad_norm", type=float, default=5,
