@@ -148,7 +148,7 @@ class Agent(ACAgent):
         # loss_a 表示 value对action的评分负值（-Q值)
         loss_a = torch.mul(-1, torch.mean(self.value.forward(obs, action_new)))
         loss_reg = torch.mean(torch.pow(model_out, 2))
-        act_reg = torch.mean(torch.pow(action_new, 2))
+        act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
         policy_loss = loss_reg + loss_a + act_reg
 
         # print(action_new.detach().cpu().numpy().tolist())
