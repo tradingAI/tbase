@@ -74,4 +74,4 @@ def get_policy_net(env, args):
             learning_rate=0.001, fc_size=200, activation=None,
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0)
     else:
-        raise "Not implement policy_net network: %s" % args.value_net
+        raise ValueError("Not implement policy_net: %s" % args.value_net)

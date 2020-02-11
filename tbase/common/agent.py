@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
-from tbase.common.torch_utils import opt_fn
+from tbase.common.optimizers import get_optimizer_func
 from tbase.network.polices import get_policy_net
 from tbase.network.values import get_value_net
 
@@ -18,7 +18,7 @@ class ACAgent(nn.Module):
         target_policy_net = get_policy_net(env, args)
         value_net = get_value_net(env, args)
         target_value_net = get_value_net(env, args)
-        optimizer_fn = opt_fn(args.opt_fn)
+        optimizer_fn = get_optimizer_func(args.opt_fn)()
         # policy net
         self.policy = policy_net
         self.target_policy = target_policy_net
@@ -45,7 +45,7 @@ class ACAgent(nn.Module):
 
     def load(self, dir):
         if dir is None or not os.path.exist(dir):
-            raise "dir is invalid"
+            raise ValueError("dir is invalid")
         self.policy.load_state_dict(
             torch.load('{}/{}.policy.pkl'.format(dir, self.name))
         )

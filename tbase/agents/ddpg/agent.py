@@ -142,16 +142,13 @@ class Agent(ACAgent):
                                  self.args.max_grad_norm)
         self.value_opt.step()
 
-        # --use the data to update the policy
-        # There is no need to cal other agent's action
+        # update the policy
         action_new, model_out = self.policy.action(obs, with_reg=True)
         # loss_a 表示 value对action的评分负值（-Q值)
         loss_a = torch.mul(-1, torch.mean(self.value.forward(obs, action_new)))
         loss_reg = torch.mean(torch.pow(model_out, 2))
         act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
         policy_loss = loss_reg + loss_a + act_reg
-
-        # print(action_new.detach().cpu().numpy().tolist())
 
         self.policy_opt.zero_grad()
         policy_loss.backward()

@@ -67,4 +67,4 @@ def get_value_net(env, args):
             act_input_size=act_size,
             act_fc1_size=200, act_fc2_size=100, output_size=1, activation=None)
     else:
-        raise "Not implement value_net network: %s" % args.value_net
+        raise ValueError("Not implement value_net: %s" % args.value_net)
