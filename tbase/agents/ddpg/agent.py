@@ -147,7 +147,7 @@ class Agent(ACAgent):
         # loss_a 表示 value对action的评分负值（-Q值)
         loss_a = torch.mul(-1, torch.mean(self.value.forward(obs, action_new)))
         loss_reg = torch.mean(torch.pow(model_out, 2))
-        act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
+        act_reg = torch.mean(torch.pow(action_new, 2))
         policy_loss = loss_reg + loss_a + act_reg
 
         self.policy_opt.zero_grad()
@@ -190,9 +190,10 @@ class Agent(ACAgent):
                                    torch.tensor(avg_reward), i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
-                logger.info("time: %.3f, iter=%d, avg_reward=%.3f, last_portfolio: %.3f" % (
-                    time.time() - t_start, i_iter,
-                    avg_reward, current_portfolio))
+                msg = "total update time: %.1f secs" % (time.time() - t_start)
+                msg += ", iter=%d, avg_reward=%.3f" % (i_iter + 1, avg_reward)
+                msg += ", current_portfolio: %.3f" % current_portfolio
+                logger.info(msg)
 
             if (i_iter + 1) % self.args.save_model_interval == 0:
                 self.save(self.model_dir)
