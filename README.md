@@ -124,8 +124,10 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 
 # 待优化
 
-- [ ] bazel build
-- [ ] unittest 补齐
+- [ ] [bazel build](https://bazel.build/)
+- [ ] 版本管理
+- [ ] unittest 补充
+- [ ] baseline模型共享百度网盘
 
 线上交流方式
 
