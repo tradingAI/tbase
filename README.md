@@ -43,11 +43,6 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] 多进程单GPU并行
   - [ ] 多进程多GPU并行
 
-- [ ] 支持单Agent与多Agent
-
-  - [x] 单Agent
-  - [ ] 多Agent
-
 - [x] 通过运行参数选择:
 
   - [x] 环境
@@ -57,7 +52,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 - 支持RL算法:
 
-  - [ ] One Agent
+  - [ ] 单Agent
 
     - [x] DDPG
     - [ ] Dueling DDPG
@@ -68,7 +63,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
     - [ ] GAIL
     - [ ] TD3
 
-  - [ ] Multi-Agent
+  - [ ] 多Agent
 
     - [ ] MADDPG
 
