@@ -84,7 +84,7 @@ def common_arg_parser():
     parser.add_argument('--value_net', default='LSTM_Merge_MLP',
                         help='network type (LSTM_Merge_MLP)')
     parser.add_argument('--reward_fn',
-                        default="daily_return_add_buy_sell_penalty",
+                        default="daily_return_add_price_bound",
                         help='reward function')
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
