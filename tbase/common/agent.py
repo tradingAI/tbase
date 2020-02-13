@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
+from datetime import datetime
 
 import torch
 import torch.nn as nn
@@ -31,7 +32,9 @@ class ACAgent(nn.Module):
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
             lr=self.value.learning_rate)
-        self.writer = SummaryWriter(log_dir=args.tensorboard_dir)
+        TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
+        log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
+        self.writer = SummaryWriter(log_dir)
 
     def save(self, dir):
         torch.save(

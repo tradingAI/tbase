@@ -199,6 +199,7 @@ class Agent(ACAgent):
                 self.save(self.model_dir)
                 """clean up gpu memory"""
                 clear_memory()
+        self.writer.close()
 
 
 def main():
