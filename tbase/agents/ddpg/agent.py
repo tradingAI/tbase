@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from tbase.common.agent import ACAgent
+from tbase.common.ac_agent import ACAgent
 from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer

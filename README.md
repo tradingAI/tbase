@@ -123,6 +123,13 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 
 - [ ] 夏普比率: 投资组合每承受一单位总风险，会产生多少的超额报酬
 
+# 如何增加agent
+1. Fork  https://github.com/iminders/tbase
+2. 在tbase.agents下添加目录, 例如: ddpg
+3. 新建agent.py, 在类名为Agent的类中实现你的agent(继承tbase.common.base_agent.BaseAgent)
+4. 测试work
+5. 发起pull request
+
 # 待优化
 
 - [ ] [bazel build](https://bazel.build/)

@@ -3,18 +3,18 @@ import os
 from datetime import datetime
 
 import torch
-import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
+from tbase.common.base_agent import BaseAgent
 from tbase.common.optimizers import get_optimizer_func
 from tbase.network.polices import get_policy_net
 from tbase.network.values import get_value_net
 
 
 # Actor Critic Agent
-class ACAgent(nn.Module):
+class ACAgent(BaseAgent):
     def __init__(self, env, args, *other_args):
-        super(ACAgent, self).__init__()
+        super(ACAgent, self).__init__(env, args, other_args)
         policy_net = get_policy_net(env, args)
         target_policy_net = get_policy_net(env, args)
         value_net = get_value_net(env, args)
