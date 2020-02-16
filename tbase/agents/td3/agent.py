@@ -8,14 +8,11 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
-from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
+from tbase.common.cmd_utilimport import make_env, set_global_seeds
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
 from tbase.common.torch_utils import clear_memory, device, soft_update
-from tbase.network.polices import LSTM_MLP
-from tbase.network.values import LSTM_Merge_MLP
 
 
 class Agent(ACAgent):
@@ -39,7 +36,7 @@ class Agent(ACAgent):
 
     def get_agent_name(self):
         code_str = self.args.codes.replace(",", "_")
-        name = "ddpg_" + code_str
+        name = "td3_" + code_str
         return name
 
     def get_model_dir(self):
@@ -174,37 +171,3 @@ class Agent(ACAgent):
                 """clean up gpu memory"""
                 clear_memory()
         self.writer.close()
-
-
-def main():
-    args = common_arg_parser()
-    if args.debug:
-        import logging
-        logger.setLevel(logging.DEBUG)
-    env = make_env(args=args)
-    input_size = env.input_size
-    act_size = env.action_space
-    policy_net = LSTM_MLP(seq_len=args.look_back_days,
-                          input_size=input_size,
-                          output_size=act_size)
-    target_policy_net = LSTM_MLP(seq_len=args.look_back_days,
-                                 input_size=input_size,
-                                 output_size=act_size)
-    value_net = LSTM_Merge_MLP(seq_len=args.look_back_days,
-                               obs_input_size=input_size,
-                               act_input_size=act_size)
-    target_value_net = LSTM_Merge_MLP(seq_len=args.look_back_days,
-                                      obs_input_size=input_size,
-                                      act_input_size=act_size)
-
-    def opt_fn(params, lr):
-        return torch.optim.RMSprop(params, lr)
-
-    agent = Agent(policy_net, value_net,
-                  target_policy_net, target_value_net,
-                  env.n, opt_fn, args.tensorboard_dir, args)
-    agent.learn()
-
-
-if __name__ == '__main__':
-    main()
