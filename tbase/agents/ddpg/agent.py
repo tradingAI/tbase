@@ -181,6 +181,7 @@ class Agent(ACAgent):
                 clear_memory()
         self.writer.close()
         logger.info("Final best portfolio: %.3f" % self.best_portfolio)
+        self.save_best_portofolio(self.model_dir)
 
 
 def main():

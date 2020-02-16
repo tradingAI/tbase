@@ -94,6 +94,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 - seed: "None", 系统随机种子
 - print_action: "False", 随机打印action的值，方便查看action分布状况
 - reward_fn: "daily_return_with_chl_penalty", env reward function
+- run_id: "1", 运行序号, 方便查看相同参数多次运行结果差异
 - [其他参数](tbase/common/cmd_util.py)
 
 **Defalut policy net setting(actor)**

@@ -115,6 +115,7 @@ def common_arg_parser():
     parser.add_argument('--print_action', default=False, action='store_true')
     parser.add_argument('--debug', default=False, action='store_true')
     parser.add_argument('--log_deals', default=False, action='store_true')
+    parser.add_argument('--run_id', type=int, default=1)
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')
     return parser.parse_args()

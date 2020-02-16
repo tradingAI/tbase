@@ -36,25 +36,28 @@ class ACAgent(BaseAgent):
         log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
         self.writer = SummaryWriter(log_dir)
         self.best_portfolio = -1.0
+        self.run_id = args.run_id
 
     def save(self, dir):
         torch.save(
             self.policy.state_dict(),
-            '{}/{}.policy.pkl'.format(dir, self.name)
+            '{}/{}.{}.policy.pkl'.format(dir, self.name, self.run_id)
         )
         torch.save(
             self.value.state_dict(),
-            '{}/{}.value.pkl'.format(dir, self.name)
+            '{}/{}.{}.value.pkl'.format(dir, self.name, self.run_id)
         )
 
     def load(self, dir):
         if dir is None or not os.path.exist(dir):
             raise ValueError("dir is invalid")
         self.policy.load_state_dict(
-            torch.load('{}/{}.policy.pkl'.format(dir, self.name))
+            torch.load('{}/{}.{}.policy.pkl'.format(
+                dir, self.name, self.run_id))
         )
         self.value.load_state_dict(
-            torch.load('{}/{}.value.pkl'.format(dir, self.name))
+            torch.load('{}/{}.{}.value.pkl'.format(
+                dir, self.name, self.run_id))
         )
 
     # 探索与搜集samples
@@ -63,3 +66,9 @@ class ACAgent(BaseAgent):
 
     def learn(*args):
         raise NotImplementedError
+
+    def save_best_portofolio(self, dir):
+        best_portfolio_path = os.path.join(dir, "best_portfolios.txt")
+        f = open(best_portfolio_path, "a")
+        f.write(str(self.run_id) + "\t" + str(self.best_portfolio) + "\n")
+        f.close()
