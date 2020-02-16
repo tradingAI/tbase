@@ -78,7 +78,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 # 训练
 
-ddpg
+例如 ddpg
 
 ```
 python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
