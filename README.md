@@ -78,7 +78,13 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 # 训练
 
-例如 ddpg 默认参数:
+ddpg
+
+```
+python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
+```
+
+默认参数:
 
 - codes: "000001.SZ", 平安银行
 - indexs: "000001.SH,399001.SZ", [000001.SH:沪指, 399001.SZ: 深指](https://tushare.pro/document/2?doc_id=94)
@@ -98,10 +104,6 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 **Defalut value net setting(critic)**
 
 ![critic](tbase/agents/ddpg/images/value.png)
-
-```
-python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
-```
 
 运行tensorboard
 
