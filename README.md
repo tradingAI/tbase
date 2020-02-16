@@ -55,7 +55,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] 单Agent
 
     - [x] DDPG
-    - [ ] TD3(Dueling DDPG)
+    - [ ] TD3(Twin Delayed Deep Deterministic Policy Gradients)
     - [ ] A2C
     - [ ] PPO
     - [ ] PPO2
