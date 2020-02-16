@@ -55,12 +55,12 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [ ] 单Agent
 
     - [x] DDPG
+    - [ ] TD3(Dueling DDPG)
     - [ ] A2C
     - [ ] PPO
     - [ ] PPO2
     - [ ] ACKTR
     - [ ] GAIL
-    - [ ] TD3(Dueling DDPG)
 
   - [ ] 多Agent
 

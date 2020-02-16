@@ -8,6 +8,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
 from tbase.common.cmd_utilimport import make_env, set_global_seeds
 from tbase.common.logger import logger
