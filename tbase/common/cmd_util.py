@@ -108,7 +108,7 @@ def common_arg_parser():
                         default="/tmp/tbase/models", type=str)
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='interval between training status(default:10)')
-    parser.add_argument('--save-model-interval', type=int, default=5)
+    parser.add_argument('--clear_memory_interval', type=int, default=5)
     parser.add_argument('--tensorboard_dir', default='/tmp/tbase/tensorboard',
                         type=str,
                         help='Directory to save learning curve data.')

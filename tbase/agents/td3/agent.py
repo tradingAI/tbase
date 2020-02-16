@@ -37,7 +37,7 @@ class Agent(ACAgent):
 
     def get_agent_name(self):
         code_str = self.args.codes.replace(",", "_")
-        name = "td3_" + code_str
+        name = "ddpg_" + code_str
         return name
 
     def get_model_dir(self):
@@ -150,6 +150,12 @@ class Agent(ACAgent):
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
                 current_portfolio = p
+                if current_portfolio > self.best_portfolio:
+                    self.best_portfolio = current_portfolio
+                    logger.info("iter: %d, new best portfolio: %.3f" % (
+                        i_iter + 1, self.best_portfolio))
+                    self.save(self.model_dir)
+
             self.writer.add_scalar('time/explore', e_t, i_iter)
             v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
                 obs, act, rew, obs_t, done)
@@ -167,8 +173,9 @@ class Agent(ACAgent):
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
 
-            if (i_iter + 1) % self.args.save_model_interval == 0:
-                self.save(self.model_dir)
+            if (i_iter + 1) % self.args.clear_memory_interval == 0:
+                # self.save(self.model_dir)
                 """clean up gpu memory"""
                 clear_memory()
         self.writer.close()
+        logger.info("Final best portfolio: %.3f" % self.best_portfolio)

@@ -35,6 +35,7 @@ class ACAgent(BaseAgent):
         TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
         log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
         self.writer = SummaryWriter(log_dir)
+        self.best_portfolio = -1.0
 
     def save(self, dir):
         torch.save(
