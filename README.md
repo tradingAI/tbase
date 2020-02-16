@@ -91,6 +91,14 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - reward_fn: "daily_return_with_chl_penalty", env reward function
 - [其他参数](tbase/common/cmd_util.py)
 
+**Defalut policy net setting(actor)**
+
+![actor](tbase/agents/ddpg/images/policy.png)
+
+**Defalut value net setting(critic)**
+
+![critic](tbase/agents/ddpg/images/value.png)
+
 ```
 python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 ```
