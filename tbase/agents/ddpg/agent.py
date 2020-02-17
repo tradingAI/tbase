@@ -1,7 +1,6 @@
 
 import math
 # -*- coding:utf-8 -*-
-import multiprocessing
 import os
 import time
 
@@ -9,13 +8,14 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 import torch.nn as nn
+from torch.multiprocessing import set_start_method
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
 from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
-from tbase.common.torch_utils import clear_memory, device, soft_update
+from tbase.common.torch_utils import device, soft_update
 from tbase.network.polices import LSTM_MLP
 from tbase.network.values import LSTM_Merge_MLP
 
@@ -52,24 +52,22 @@ class Agent(ACAgent):
     # 探索与搜集samples
     def explore(self, explore_size, sample_size):
         t_start = time.time()
-        queue = multiprocessing.Queue()
+        queue = mp.Queue()
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
-        self.policy.share_memory()
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
-                           self.memorys[i], self.policy.to('cpu'), thread_size,
+                           self.memorys[i], self.policy, thread_size,
                            self.args.print_action)
             workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
-            worker.daemon = True
             worker.start()
 
         obs, action, rew, obs_next, done = [], [], [], [], []
         reward_log = []
         portfolios = []
-        for _ in workers:
+        for _ in range(self.num_env):
             i, next_idx,  memory, env, state, rewards, portfolio = queue.get()
             self.memorys[i] = memory
             self.envs[i] = env
@@ -106,7 +104,6 @@ class Agent(ACAgent):
         obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(device,
                                                                    torch.float)
         target_act_next = self.target_policy.action(obs_next).detach()
-
         target_q_next = self.target_value.forward(obs_next, target_act_next)
         target_q = reward + torch.mul(target_q_next, (done * self.args.gamma))
         q = self.value.forward(obs, action)
@@ -139,6 +136,11 @@ class Agent(ACAgent):
         return value_loss, policy_loss, loss_reg, act_reg, used_time
 
     def learn(self):
+        set_start_method('spawn')
+        self.policy.share_memory()
+        self.target_policy.share_memory()
+        self.value.share_memory()
+        self.target_value.share_memory()
         logger.info("warmming up: %d" % self.args.warm_up)
         self.explore(self.args.warm_up, self.args.sample_size)
         logger.info("warm up: %d finished" % self.args.warm_up)
@@ -159,10 +161,12 @@ class Agent(ACAgent):
                     logger.info("iter: %d, new best portfolio: %.3f" % (
                         i_iter + 1, self.best_portfolio))
                     self.save(self.model_dir)
-
             self.writer.add_scalar('time/explore', e_t, i_iter)
-            v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
-                obs, act, rew, obs_t, done)
+            try:
+                v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
+                    obs, act, rew, obs_t, done)
+            except Exception as error:
+                print(error)
             self.writer.add_scalar('time/update', u_t, i_iter)
             self.writer.add_scalar('loss/value', v_loss, i_iter)
             self.writer.add_scalar('loss/policy', p_loss, i_iter)
@@ -177,10 +181,6 @@ class Agent(ACAgent):
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
 
-            if (i_iter + 1) % self.args.clear_memory_interval == 0:
-                # self.save(self.model_dir)
-                """clean up gpu memory"""
-                clear_memory()
         self.writer.close()
         logger.info("Final best portfolio: %.3f" % self.best_portfolio)
         self.save_best_portofolio(self.model_dir)

@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import copy
 import os
 from datetime import datetime
 
@@ -19,13 +18,13 @@ class ACAgent(BaseAgent):
         optimizer_fn = get_optimizer_func(args.opt_fn)()
         # policy net
         self.policy = get_policy_net(env, args)
-        self.target_policy = copy.deepcopy(self.policy)
+        self.target_policy = get_policy_net(env, args)
         self.policy_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.policy.parameters()),
             lr=self.policy.learning_rate)
         # value net
         self.value = get_value_net(env, args)
-        self.target_value = copy.deepcopy(self.value)
+        self.target_value = get_value_net(env, args)
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
             lr=self.args.lr)
@@ -69,3 +68,7 @@ class ACAgent(BaseAgent):
         f = open(best_portfolio_path, "a")
         f.write(str(self.run_id) + "\t" + str(self.best_portfolio) + "\n")
         f.close()
+
+    def print_net(self, net):
+        for param_tensor in net.state_dict():
+            print(param_tensor, "\t", net.state_dict()[param_tensor].size())

@@ -5,7 +5,7 @@ import torch
 from torch.autograd import Variable
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
-from tbase.common.torch_utils import fc, get_activation, lstm
+from tbase.common.torch_utils import device, fc, get_activation, lstm
 from tbase.network.base import BasePolicy
 
 
@@ -41,7 +41,7 @@ class LSTM_MLP(BasePolicy):
     def action(self, obs, with_reg=False):
         # obs: seq_len, batch_size, input_size
         h_0, c_0 = self.init_hidden(obs.shape[1])
-        output, _ = self.rnn(obs, (h_0, c_0))
+        output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
         # action = self.action_high * torch.tanh(self.fc2(encoded))
@@ -69,6 +69,6 @@ def get_policy_net(env, args):
             seq_len=seq_len, input_size=input_size, hidden_size=300,
             output_size=act_size, num_layers=1, dropout=0.0,
             learning_rate=args.lr, fc_size=200, activation=activation,
-            ou_theta=0.15, ou_sigma=0.2, ou_mu=0)
+            ou_theta=0.15, ou_sigma=0.2, ou_mu=0).to(device)
     else:
         raise ValueError("Not implement policy_net: %s" % args.value_net)
