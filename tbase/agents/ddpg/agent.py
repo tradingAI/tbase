@@ -105,10 +105,8 @@ class Agent(ACAgent):
         obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(device,
                                                                    torch.float)
         print(time.time() - t_start)
-        self.print_net(self.target_policy)
-        self.print_net(self.policy)
+
         target_act_next = self.target_policy.action(obs_next).detach()
-        print(target_act_next)
         target_q_next = self.target_value.forward(obs_next, target_act_next)
         target_q = reward + torch.mul(target_q_next, (done * self.args.gamma))
         q = self.value.forward(obs, action)
