@@ -7,6 +7,7 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
+from torch.multiprocessing import set_start_method
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
@@ -148,6 +149,11 @@ class Agent(ACAgent):
 
     def learn(self):
         logger.info("warmming up: %d" % self.args.warm_up)
+        set_start_method('spawn')
+        self.policy.share_memory()
+        self.target_policy.share_memory()
+        self.value.share_memory()
+        self.target_value.share_memory()
         self.explore(self.args.warm_up, self.args.sample_size)
         logger.info("warm up: %d finished" % self.args.warm_up)
         logger.info("learning started")
