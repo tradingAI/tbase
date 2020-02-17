@@ -63,9 +63,8 @@ class Agent(ACAgent):
                            self.args.print_action)
             workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
+            worker.daemon = True
             worker.start()
-        for worker in workers:
-            worker.join()
 
         obs, action, rew, obs_next, done = [], [], [], [], []
         reward_log = []
