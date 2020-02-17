@@ -42,7 +42,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [x] 多进程CPU并行: 多进程运行独立的Enviroment进行探索
   - [x] 多进程单GPU并行
   - [ ] 多进程多GPU并行
-  - [ ] 混合精度训练
+  - [ ] 混合精度训练(Apex)
 
 - [x] 通过运行参数选择:
 
