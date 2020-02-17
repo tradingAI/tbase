@@ -1,7 +1,6 @@
 
 import math
 # -*- coding:utf-8 -*-
-import multiprocessing
 import os
 import time
 
@@ -9,6 +8,7 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 import torch.nn as nn
+from torch.multiprocessing import set_start_method
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
@@ -52,24 +52,23 @@ class Agent(ACAgent):
     # 探索与搜集samples
     def explore(self, explore_size, sample_size):
         t_start = time.time()
-        queue = multiprocessing.Queue()
+        queue = mp.Queue()
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
         self.policy.share_memory()
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
-                           self.memorys[i], self.policy.to('cpu'), thread_size,
+                           self.memorys[i], self.policy, thread_size,
                            self.args.print_action)
             workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
-            worker.daemon = True
             worker.start()
 
         obs, action, rew, obs_next, done = [], [], [], [], []
         reward_log = []
         portfolios = []
-        for _ in workers:
+        for _ in range(self.num_env):
             i, next_idx,  memory, env, state, rewards, portfolio = queue.get()
             self.memorys[i] = memory
             self.envs[i] = env
@@ -139,6 +138,7 @@ class Agent(ACAgent):
         return value_loss, policy_loss, loss_reg, act_reg, used_time
 
     def learn(self):
+        set_start_method('spawn')
         logger.info("warmming up: %d" % self.args.warm_up)
         self.explore(self.args.warm_up, self.args.sample_size)
         logger.info("warm up: %d finished" % self.args.warm_up)
