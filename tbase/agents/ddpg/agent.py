@@ -159,7 +159,7 @@ class Agent(ACAgent):
                     logger.info("iter: %d, new best portfolio: %.3f" % (
                         i_iter + 1, self.best_portfolio))
                     self.save(self.model_dir)
-
+            print(ports)
             self.writer.add_scalar('time/explore', e_t, i_iter)
             v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
                 obs, act, rew, obs_t, done)
