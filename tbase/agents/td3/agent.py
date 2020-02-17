@@ -17,7 +17,7 @@ from tbase.common.torch_utils import clear_memory, device, soft_update
 
 
 class Agent(ACAgent):
-    def __init__(self, env=None, args=None, noise_clip=0.5, policy_noise=0.2):
+    def __init__(self, env=None, args=None, noise_clip=0.2, policy_noise=0.2):
         super(Agent, self).__init__(env, args)
         self.name = self.get_agent_name()
         self.model_dir = self.get_model_dir()
@@ -132,7 +132,6 @@ class Agent(ACAgent):
             loss_a = torch.mul(-1, torch.mean(self.value.Q1(obs, action_new)))
             loss_reg = torch.mean(torch.pow(model_out, 2))
             act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
-
             policy_loss = loss_reg + loss_a + act_reg
 
             self.policy_opt.zero_grad()
@@ -172,13 +171,14 @@ class Agent(ACAgent):
             self.writer.add_scalar('time/explore', e_t, i_iter)
             v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
                 obs, act, rew, obs_t, done, i_iter)
-            self.writer.add_scalar('time/update', u_t, i_iter)
-            self.writer.add_scalar('loss/value', v_loss, i_iter)
-            self.writer.add_scalar('loss/policy', p_loss, i_iter)
-            self.writer.add_scalar('reg/action', act_reg, i_iter)
-            self.writer.add_scalar('reg/policy', p_reg, i_iter)
-            self.writer.add_scalar('reward/policy',
-                                   torch.tensor(avg_reward), i_iter)
+            if i_iter % self.policy_freq == 0:
+                self.writer.add_scalar('time/update', u_t, i_iter)
+                self.writer.add_scalar('loss/value', v_loss, i_iter)
+                self.writer.add_scalar('loss/policy', p_loss, i_iter)
+                self.writer.add_scalar('reg/action', act_reg, i_iter)
+                self.writer.add_scalar('reg/policy', p_reg, i_iter)
+                self.writer.add_scalar('reward/policy',
+                                       torch.tensor(avg_reward), i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
                 msg = "total update time: %.1f secs" % (time.time() - t_start)

@@ -2,11 +2,10 @@
 
 import numpy as np
 import torch
-import torch.nn as nn
 from torch.autograd import Variable
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
-from tbase.common.torch_utils import fc, lstm
+from tbase.common.torch_utils import fc, get_activation, lstm
 from tbase.network.base import BasePolicy
 
 
@@ -28,10 +27,7 @@ class LSTM_MLP(BasePolicy):
         self.rnn = lstm(input_size, hidden_size, num_layers, dropout)
         self.fc1 = fc(hidden_size, fc_size)
         self.fc2 = fc(fc_size, output_size)
-        if activation is None:
-            self.activation = nn.Tanh()
-        else:
-            self.activation = activation
+        self.activation = activation
         self.random_process = OrnsteinUhlenbeckProcess(
             size=output_size, theta=ou_theta, mu=ou_mu, sigma=ou_sigma)
 
@@ -48,7 +44,8 @@ class LSTM_MLP(BasePolicy):
         output, _ = self.rnn(obs, (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
-        action = self.activation(self.fc2(encoded))
+        # action = self.action_high * torch.tanh(self.fc2(encoded))
+        action = torch.tanh(self.fc2(encoded))
         if with_reg:
             return action, encoded
         return action
@@ -63,15 +60,15 @@ class LSTM_MLP(BasePolicy):
 
 
 def get_policy_net(env, args):
+    seq_len = args.look_back_days
+    input_size = env.input_size
+    act_size = env.action_space
+    activation = get_activation(args.activation)
     if args.policy_net == "LSTM_MLP":
-        seq_len = args.look_back_days
-        input_size = env.input_size
-        act_size = env.action_space
-        # TODO:
         return LSTM_MLP(
             seq_len=seq_len, input_size=input_size, hidden_size=300,
             output_size=act_size, num_layers=1, dropout=0.0,
-            learning_rate=0.001, fc_size=200, activation=None,
+            learning_rate=args.lr, fc_size=200, activation=activation,
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0)
     else:
         raise ValueError("Not implement policy_net: %s" % args.value_net)

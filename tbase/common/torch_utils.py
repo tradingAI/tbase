@@ -40,3 +40,12 @@ def soft_update(target, source, tau):
 def clear_memory():
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+
+
+def get_activation(activation):
+    if activation == "tanh":
+        return nn.Tanh()
+    elif activation == "relu":
+        return nn.ReLU()
+    else:
+        raise NotImplementedError

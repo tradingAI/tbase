@@ -1,10 +1,9 @@
 # -*- coding:utf-8 -*-
 
 import torch
-import torch.nn as nn
 from torch.autograd import Variable
 
-from tbase.common.torch_utils import fc, lstm
+from tbase.common.torch_utils import fc, get_activation, lstm
 from tbase.network.base import BaseNet
 
 
@@ -42,11 +41,7 @@ class LSTM_Merge_MLP(BaseNet):
         self.fc1 = fc(act_input_size, act_fc1_size)
         self.fc2 = fc(act_fc1_size, act_fc2_size)
         self.fc3 = fc(rnn_hidden_size + act_fc2_size, output_size)
-
-        if activation is None:
-            self.activation = nn.Tanh()
-        else:
-            self.activation = activation
+        self.activation = activation
 
     def init_hidden(self, batch_size):
         h_0 = Variable(torch.randn(self.num_layers, batch_size,
@@ -62,24 +57,27 @@ class LSTM_Merge_MLP(BaseNet):
         output, _ = self.rnn(obs, (h_0, c_0))
         # 取最后的一个输出
         output = output[-1, :, :].view(obs.shape[1], self.rnn_hidden_size)
+        output = self.activation(output)
         # actor full connect
-        act_output = self.fc1(act_n)
-        act_output = self.fc2(act_output)
+        act_output = self.activation(self.fc1(act_n))
+        act_output = self.activation(self.fc2(act_output))
         fc_input = torch.cat((output, act_output), dim=1)
         v = self.fc3(fc_input)
         return v
 
 
 def get_single_value_net(env, args):
+    seq_len = args.look_back_days
+    input_size = env.input_size
+    act_size = env.action_space
+    activation = get_activation(args.activation)
     if args.value_net == "LSTM_Merge_MLP":
-        seq_len = args.look_back_days
-        input_size = env.input_size
-        act_size = env.action_space
         return LSTM_Merge_MLP(
             seq_len=seq_len, obs_input_size=input_size, rnn_hidden_size=300,
             num_layers=1, dropout=0.0, learning_rate=args.lr,
             act_input_size=act_size,
-            act_fc1_size=200, act_fc2_size=100, output_size=1, activation=None)
+            act_fc1_size=200, act_fc2_size=100, output_size=1,
+            activation=activation)
     else:
         raise ValueError("Not implement value_net: %s" % args.value_net)
 

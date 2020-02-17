@@ -86,6 +86,9 @@ def common_arg_parser():
     parser.add_argument('--reward_fn',
                         default="daily_return_with_chl_penalty",
                         help='reward function')
+    parser.add_argument('--activation',
+                        default="tanh",
+                        help='activation function')
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
     parser.add_argument('--alg', help='rl algorithm', type=str, default='ddpg')
