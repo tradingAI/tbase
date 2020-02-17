@@ -41,7 +41,7 @@ class LSTM_MLP(BasePolicy):
     def action(self, obs, with_reg=False):
         # obs: seq_len, batch_size, input_size
         h_0, c_0 = self.init_hidden(obs.shape[1])
-        output, _ = self.rnn(obs, (h_0, c_0))
+        output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
         # action = self.action_high * torch.tanh(self.fc2(encoded))
