@@ -1,11 +1,13 @@
-# -*- coding:utf-8 -*-
+
 import math
+# -*- coding:utf-8 -*-
 import multiprocessing
 import os
 import time
 
 import numpy as np
 import torch
+import torch.multiprocessing as mp
 import torch.nn as nn
 
 from tbase.agents.explore import explore
@@ -54,14 +56,16 @@ class Agent(ACAgent):
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
+        self.policy.share_memory()
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
                            self.memorys[i], self.policy.to('cpu'), thread_size,
                            self.args.print_action)
-            workers.append(multiprocessing.Process(target=explore,
-                                                   args=worker_args))
+            workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
             worker.start()
+        for worker in workers:
+            worker.join()
 
         obs, action, rew, obs_next, done = [], [], [], [], []
         reward_log = []
