@@ -38,7 +38,6 @@ class LSTM_Merge_MLP(BaseNet):
         self.learning_rate = learning_rate
         # 定义和初始化网络
         self.rnn = lstm(obs_input_size, rnn_hidden_size, num_layers, dropout)
-        self.rnn = torch.nn.ModuleList(self.rnn)
         self.fc1 = fc(act_input_size, act_fc1_size)
         self.fc2 = fc(act_fc1_size, act_fc2_size)
         self.fc3 = fc(rnn_hidden_size + act_fc2_size, output_size)
