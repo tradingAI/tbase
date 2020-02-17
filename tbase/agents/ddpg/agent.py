@@ -177,10 +177,6 @@ class Agent(ACAgent):
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
 
-            if (i_iter + 1) % self.args.clear_memory_interval == 0:
-                # self.save(self.model_dir)
-                """clean up gpu memory"""
-                clear_memory()
         self.writer.close()
         logger.info("Final best portfolio: %.3f" % self.best_portfolio)
         self.save_best_portofolio(self.model_dir)
