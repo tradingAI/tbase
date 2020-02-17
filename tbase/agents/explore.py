@@ -29,5 +29,5 @@ def explore(pid, queue, env, state, memory, policy, size, print_actions):
             portfolios.append(info["portfolio_value"])
             continue
         state = next_state
-    print(pid, len(rewards))
     queue.put([pid, memory._next_idx, memory, env, state, rewards, portfolios])
+    return
