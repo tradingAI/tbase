@@ -8,7 +8,6 @@ from importlib import import_module
 
 import torch
 
-from tbase.agents.td3.agent import Agent
 from tbase.common.cmd_util import common_arg_parser, make_env
 from tbase.common.logger import logger
 
