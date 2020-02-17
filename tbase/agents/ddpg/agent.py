@@ -162,8 +162,11 @@ class Agent(ACAgent):
                         i_iter + 1, self.best_portfolio))
                     self.save(self.model_dir)
             self.writer.add_scalar('time/explore', e_t, i_iter)
-            v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
-                obs, act, rew, obs_t, done)
+            try:
+                v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
+                    obs, act, rew, obs_t, done)
+            except Exception as error:
+                print(error)
             self.writer.add_scalar('time/update', u_t, i_iter)
             self.writer.add_scalar('loss/value', v_loss, i_iter)
             self.writer.add_scalar('loss/policy', p_loss, i_iter)
