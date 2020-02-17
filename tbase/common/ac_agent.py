@@ -68,3 +68,7 @@ class ACAgent(BaseAgent):
         f = open(best_portfolio_path, "a")
         f.write(str(self.run_id) + "\t" + str(self.best_portfolio) + "\n")
         f.close()
+
+    def print_net(self, net):
+        for param_tensor in net.state_dict():
+            print(param_tensor, "\t", net.state_dict()[param_tensor].size())
