@@ -93,6 +93,8 @@ def common_arg_parser():
                         help='optimizer function')
     parser.add_argument("--gamma", type=float, default=0.53,
                         help="discount factor")
+    parser.add_argument("--lr", type=float, default=0.001,
+                        help="learning rate")
     parser.add_argument("--max_grad_norm", type=float, default=5,
                         help="max gradient norm for clip")
     parser.add_argument("--tau", type=int, default=0.95,

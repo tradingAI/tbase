@@ -8,6 +8,21 @@ from tbase.common.torch_utils import fc, lstm
 from tbase.network.base import BaseNet
 
 
+class DoubleValue(BaseNet):
+    def __init__(self, net1, net2):
+        super(DoubleValue, self).__init__()
+        self.net1 = net1
+        self.net2 = net2
+
+    def forward(self, state, action):
+        q1 = self.net1.forward(state, action)
+        q2 = self.net2.forward(state, action)
+        return q1, q2
+
+    def Q1(self, state, action):
+        return self.net1.forward(state, action)
+
+
 class LSTM_Merge_MLP(BaseNet):
     def __init__(self, seq_len=11, obs_input_size=10, rnn_hidden_size=300,
                  num_layers=1, dropout=0.0, learning_rate=0.001,
@@ -55,16 +70,28 @@ class LSTM_Merge_MLP(BaseNet):
         return v
 
 
-def get_value_net(env, args):
+def get_single_value_net(env, args):
     if args.value_net == "LSTM_Merge_MLP":
         seq_len = args.look_back_days
         input_size = env.input_size
         act_size = env.action_space
-        # TODO:
         return LSTM_Merge_MLP(
             seq_len=seq_len, obs_input_size=input_size, rnn_hidden_size=300,
-            num_layers=1, dropout=0.0, learning_rate=0.001,
+            num_layers=1, dropout=0.0, learning_rate=args.lr,
             act_input_size=act_size,
             act_fc1_size=200, act_fc2_size=100, output_size=1, activation=None)
     else:
         raise ValueError("Not implement value_net: %s" % args.value_net)
+
+
+def get_double_value_net(env, args):
+    net1 = get_single_value_net(env, args)
+    net2 = get_single_value_net(env, args)
+    net = DoubleValue(net1, net2)
+    return net
+
+
+def get_value_net(env, args):
+    if args.alg == 'td3':
+        return get_double_value_net(env, args)
+    return get_single_value_net(env, args)

@@ -10,18 +10,21 @@ import torch.nn as nn
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
-from tbase.common.cmd_utilimport import make_env, set_global_seeds
+from tbase.common.cmd_util import make_env, set_global_seeds
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
 from tbase.common.torch_utils import clear_memory, device, soft_update
 
 
 class Agent(ACAgent):
-    def __init__(self, env=None, args=None):
+    def __init__(self, env=None, args=None, noise_clip=0.5, policy_noise=0.2):
         super(Agent, self).__init__(env, args)
-        self.args = args
         self.name = self.get_agent_name()
         self.model_dir = self.get_model_dir()
+        self.noise_clip = noise_clip
+        self.policy_freq = 2
+        self.policy_noise = policy_noise
+        self.criterion = torch.nn.MSELoss()
         self.num_env = args.num_env
         self.envs = []
         self.states = []
@@ -37,7 +40,7 @@ class Agent(ACAgent):
 
     def get_agent_name(self):
         code_str = self.args.codes.replace(",", "_")
-        name = "ddpg_" + code_str
+        name = "td3_" + code_str
         return name
 
     def get_model_dir(self):
@@ -88,7 +91,7 @@ class Agent(ACAgent):
             np.concatenate(tuple(done), axis=0), \
             np.mean(reward_log), used_time, portfolios
 
-    def update_params(self, _obs, _action, _rew, _obs_next, _done):
+    def update_params(self, _obs, _action, _rew, _obs_next, _done, n_iter):
         t_start = time.time()
         # --use the date to update the value
         reward = torch.tensor(_rew, device=device, dtype=torch.float)
@@ -101,35 +104,45 @@ class Agent(ACAgent):
         obs = torch.from_numpy(_obs).permute(1, 0, 2).to(device, torch.float)
         obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(device,
                                                                    torch.float)
-        target_act_next = self.target_policy.action(obs_next).detach()
+        noise = (torch.randn_like(action) * self.policy_noise).clamp(
+            -self.noise_clip, self.noise_clip)
 
-        target_q_next = self.target_value.forward(obs_next, target_act_next)
+        target_act_next = (self.target_policy.action(obs_next) + noise).clamp(
+            -self.policy.action_low, self.policy.action_high).detach()
+
+        target_q1_next, target_q2_next = self.target_value.forward(
+            obs_next, target_act_next)
+        target_q_next = torch.min(target_q1_next, target_q2_next)
         target_q = reward + torch.mul(target_q_next, (done * self.args.gamma))
-        q = self.value.forward(obs, action)
+
+        q1, q2 = self.value.forward(obs, action)
         # bellman equation
-        value_loss = torch.nn.MSELoss()(q, target_q)
+        value_loss = self.criterion(q1, target_q) + self.criterion(q2,
+                                                                   target_q)
         self.value_opt.zero_grad()
         value_loss.backward()
-        nn.utils.clip_grad_norm_(self.value.parameters(),
-                                 self.args.max_grad_norm)
         self.value_opt.step()
 
-        # update the policy
-        action_new, model_out = self.policy.action(obs, with_reg=True)
-        # loss_a 表示 value对action的评分负值（-Q值)
-        loss_a = torch.mul(-1, torch.mean(self.value.forward(obs, action_new)))
-        loss_reg = torch.mean(torch.pow(model_out, 2))
-        act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
-        policy_loss = loss_reg + loss_a + act_reg
+        policy_loss, loss_reg, act_reg = 0, 0, 0
+        # Delayed policy updates
+        if n_iter % self.policy_freq == 0:
+            # update the policy
+            action_new, model_out = self.policy.action(obs, with_reg=True)
+            # loss_a 表示 value对action的评分负值（-Q值)
+            loss_a = torch.mul(-1, torch.mean(self.value.Q1(obs, action_new)))
+            loss_reg = torch.mean(torch.pow(model_out, 2))
+            act_reg = torch.mean(torch.pow(action_new, 2)) * 5e-1
 
-        self.policy_opt.zero_grad()
-        policy_loss.backward()
-        nn.utils.clip_grad_norm_(self.policy.parameters(),
-                                 self.args.max_grad_norm)
-        self.policy_opt.step()
+            policy_loss = loss_reg + loss_a + act_reg
 
-        soft_update(self.target_policy, self.policy, self.args.tau)
-        soft_update(self.target_value, self.value, self.args.tau)
+            self.policy_opt.zero_grad()
+            policy_loss.backward()
+            nn.utils.clip_grad_norm_(self.policy.parameters(),
+                                     self.args.max_grad_norm)
+            self.policy_opt.step()
+
+            soft_update(self.target_policy, self.policy, self.args.tau)
+            soft_update(self.target_value, self.value, self.args.tau)
 
         used_time = time.time() - t_start
         return value_loss, policy_loss, loss_reg, act_reg, used_time
@@ -158,7 +171,7 @@ class Agent(ACAgent):
 
             self.writer.add_scalar('time/explore', e_t, i_iter)
             v_loss, p_loss, p_reg, act_reg, u_t = self.update_params(
-                obs, act, rew, obs_t, done)
+                obs, act, rew, obs_t, done, i_iter)
             self.writer.add_scalar('time/update', u_t, i_iter)
             self.writer.add_scalar('loss/value', v_loss, i_iter)
             self.writer.add_scalar('loss/policy', p_loss, i_iter)

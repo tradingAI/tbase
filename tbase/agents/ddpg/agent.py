@@ -21,7 +21,6 @@ from tbase.network.values import LSTM_Merge_MLP
 class Agent(ACAgent):
     def __init__(self, env=None, args=None):
         super(Agent, self).__init__(env, args)
-        self.args = args
         self.name = self.get_agent_name()
         self.model_dir = self.get_model_dir()
         self.num_env = args.num_env

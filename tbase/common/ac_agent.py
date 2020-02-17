@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import copy
 import os
 from datetime import datetime
 
@@ -15,23 +16,19 @@ from tbase.network.values import get_value_net
 class ACAgent(BaseAgent):
     def __init__(self, env, args, *other_args):
         super(ACAgent, self).__init__(env, args, other_args)
-        policy_net = get_policy_net(env, args)
-        target_policy_net = get_policy_net(env, args)
-        value_net = get_value_net(env, args)
-        target_value_net = get_value_net(env, args)
         optimizer_fn = get_optimizer_func(args.opt_fn)()
         # policy net
-        self.policy = policy_net
-        self.target_policy = target_policy_net
+        self.policy = get_policy_net(env, args)
+        self.target_policy = copy.deepcopy(self.policy)
         self.policy_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.policy.parameters()),
             lr=self.policy.learning_rate)
         # value net
-        self.value = value_net
-        self.target_value = target_value_net
+        self.value = get_value_net(env, args)
+        self.target_value = copy.deepcopy(self.value)
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
-            lr=self.value.learning_rate)
+            lr=self.args.lr)
         TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
         log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
         self.writer = SummaryWriter(log_dir)
