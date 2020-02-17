@@ -25,6 +25,7 @@ class LSTM_MLP(BasePolicy):
         self.learning_rate = learning_rate
         # 定义和初始化网络
         self.rnn = lstm(input_size, hidden_size, num_layers, dropout)
+        self.rnn = torch.nn.ModuleList(self.rnn)
         self.fc1 = fc(hidden_size, fc_size)
         self.fc2 = fc(fc_size, output_size)
         self.activation = activation
