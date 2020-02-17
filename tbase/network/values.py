@@ -3,7 +3,7 @@
 import torch
 from torch.autograd import Variable
 
-from tbase.common.torch_utils import fc, get_activation, lstm
+from tbase.common.torch_utils import device, fc, get_activation, lstm
 from tbase.network.base import BaseNet
 
 
@@ -77,7 +77,7 @@ def get_single_value_net(env, args):
             num_layers=1, dropout=0.0, learning_rate=args.lr,
             act_input_size=act_size,
             act_fc1_size=200, act_fc2_size=100, output_size=1,
-            activation=activation)
+            activation=activation).to(device)
     else:
         raise ValueError("Not implement value_net: %s" % args.value_net)
 
