@@ -56,7 +56,6 @@ class Agent(ACAgent):
         thread_size = int(math.floor(explore_size / self.num_env))
         thread_sample_size = int(math.floor(sample_size / self.num_env))
         workers = []
-        self.policy.share_memory()
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
                            self.memorys[i], self.policy, thread_size,
@@ -138,6 +137,10 @@ class Agent(ACAgent):
 
     def learn(self):
         set_start_method('spawn')
+        self.policy.share_memory()
+        self.target_policy.share_memory()
+        self.value.share_memory()
+        self.target_value.share_memory()
         logger.info("warmming up: %d" % self.args.warm_up)
         self.explore(self.args.warm_up, self.args.sample_size)
         logger.info("warm up: %d finished" % self.args.warm_up)
