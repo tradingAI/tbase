@@ -106,6 +106,7 @@ class Agent(ACAgent):
                                                                    torch.float)
         print(time.time() - t_start)
         self.print_net(self.target_policy)
+        self.print_net(self.policy)
         target_act_next = self.target_policy.action(obs_next).detach()
         print(target_act_next)
         target_q_next = self.target_value.forward(obs_next, target_act_next)
