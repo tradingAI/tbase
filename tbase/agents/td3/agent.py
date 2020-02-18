@@ -57,7 +57,7 @@ class Agent(ACAgent):
         workers = []
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
-                           self.memorys[i], self.policy.to('cpu'), thread_size,
+                           self.memorys[i], self.policy, thread_size,
                            self.args.print_action)
             workers.append(mp.Process(target=explore, args=worker_args))
         for worker in workers:
