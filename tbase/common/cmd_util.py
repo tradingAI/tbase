@@ -12,7 +12,7 @@ from tgym.scenario import make_env as _make_env
 
 def set_global_seeds(seed):
     if seed is None:
-        seed = np.random.randint(int(1e6))
+        seed = random.randint(0, int(1e6))
     np.random.seed(seed)
     random.seed(seed)
     torch.manual_seed(seed)

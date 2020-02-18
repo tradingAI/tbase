@@ -1,4 +1,4 @@
-numpy>=1.18.0
+numpy==1.16.0
 pandas>=0.25.3
 tushare
 gym

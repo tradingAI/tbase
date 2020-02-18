@@ -47,8 +47,6 @@ ENV CODE_DIR /root/trade
 # install tgym
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
-ARG BUILD_DATE
-ENV BUILD_DATE=${BUILD_DATE}
 RUN echo "rm tgym"
 RUN rm -rf tgym
 RUN git clone https://github.com/iminders/tgym.git
@@ -58,15 +56,16 @@ RUN cd $CODE_DIR/tgym && rm -rf __pycache__ && \
     pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com -r requirements.txt && \
     pip install -e .
 
-RUN rm -rf /root/.cache/pip \
-    && find / -type d -name __pycache__ -exec rm -r {} \+
-
+ARG BUILD_DATE
+ENV BUILD_DATE=${BUILD_DATE}
 COPY . $CODE_DIR/tbase
 RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
     pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com -r requirements.txt && \
     pip install -e .
-
+RUN rm -rf /root/.cache/pip \
+    && find / -type d -name __pycache__ -exec rm -r {} \+
+    
 WORKDIR $CODE_DIR/tbase
 
 ARG TUSHARE_TOKEN
