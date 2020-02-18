@@ -47,7 +47,6 @@ ENV CODE_DIR /root/trade
 # install tgym
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
-RUN echo "rm tgym"
 RUN rm -rf tgym
 RUN git clone https://github.com/iminders/tgym.git
 # Clean up pycache and pyc files
@@ -65,7 +64,7 @@ RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     pip install -e .
 RUN rm -rf /root/.cache/pip \
     && find / -type d -name __pycache__ -exec rm -r {} \+
-    
+
 WORKDIR $CODE_DIR/tbase
 
 ARG TUSHARE_TOKEN
