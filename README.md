@@ -37,8 +37,6 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   pip install -e .
   ```
 
-- 依赖包安装步骤参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
-
 # Features(开发中, 欢迎一起完善)
 
 - [ ] 加速
