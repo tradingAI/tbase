@@ -12,26 +12,22 @@ def explore(pid, queue, env, state, memory, policy, size, print_actions):
     rewards = []
     portfolios = []
     while num_steps < size:
-        try:
-            state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
-                torch.float)
-            with torch.no_grad():
-                action = policy.select_action(state_var)
-            action = action.astype(np.float)
-            if print_actions:
-                if random.random() < 0.001:
-                    print("tbase.agents.ddpg.agent action:" + str(action))
-            next_state, reward, done, info, _ = env.step(action)
-            memory.add(state, action, reward, next_state, done)
-            rewards.append(reward)
-            num_steps += 1
-            if done:
-                state = env.reset()
-                portfolios.append(info["portfolio_value"])
-                continue
-            state = next_state
-        except Exception as e:
-            print(e)
-            raise Exception(str(e))
+        state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
+            torch.float)
+        with torch.no_grad():
+            action = policy.select_action(state_var)
+        action = action.astype(np.float)
+        if print_actions:
+            if random.random() < 0.001:
+                print("tbase.agents.ddpg.agent action:" + str(action))
+        next_state, reward, done, info, _ = env.step(action)
+        memory.add(state, action, reward, next_state, done)
+        rewards.append(reward)
+        num_steps += 1
+        if done:
+            state = env.reset()
+            portfolios.append(info["portfolio_value"])
+            continue
+        state = next_state
     queue.put([pid, memory._next_idx, memory, env, state, rewards, portfolios])
     return
