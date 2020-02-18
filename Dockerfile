@@ -49,9 +49,10 @@ ENV CODE_DIR /root/trade
 # install tgym
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
+ARG BUILD_DATE
+ENV BUILD_DATE=${BUILD_DATE}
 RUN echo "rm tgym"
 RUN rm -rf tgym
-RUN echo "tgym"
 RUN git clone https://github.com/iminders/tgym.git
 # Clean up pycache and pyc files
 RUN cd $CODE_DIR/tgym && rm -rf __pycache__ && \
