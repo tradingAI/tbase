@@ -1,7 +1,5 @@
-FROM ubuntu:18.04
-
-# 更换为阿里云境像
-RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list
+# https://github.com/iminders/services/blob/master/docker-images/aiminders/bazel/latest.Dockerfile
+FROM aiminders/library:bazel.latest
 
 RUN apt-get -y update --fix-missing && \
     apt-get -y upgrade --fix-missing && \
@@ -35,10 +33,6 @@ RUN apt-get -y update --fix-missing && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
 
-# Python
-RUN apt-get install -y python3 python3-pip
-RUN ln -sf /usr/bin/python3 /usr/bin/python
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com \
     tushare gym torch matplotlib
 

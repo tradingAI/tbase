@@ -2,7 +2,7 @@
 
 Baselines of reinforcement learning trading agents(PyTorch based).
 
-支持环境： python3(>=3.5)
+支持环境： Python 3.5–3.7
 
 # 安装
 
