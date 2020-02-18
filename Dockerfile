@@ -41,8 +41,6 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com \
     tushare gym torch matplotlib
-# tensorboard
-RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com tensorflow tensorboard
 
 ENV CODE_DIR /root/trade
 
@@ -64,6 +62,10 @@ RUN rm -rf /root/.cache/pip \
     && find / -type d -name __pycache__ -exec rm -r {} \+
 
 COPY . $CODE_DIR/tbase
+RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
+    find . -name "*.pyc" -delete && \
+    pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com -r requirements.txt && \
+    pip install -e .
 
 WORKDIR $CODE_DIR/tbase
 

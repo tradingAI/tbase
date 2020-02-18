@@ -38,7 +38,7 @@ def main():
     if args.debug:
         import logging
         logger.setLevel(logging.DEBUG)
-    set_global_seeds(args.seed)
+    set_global_seeds(str(args.seed))
     logger.info("tbase.run set global_seeds: %d" % args.seed)
     env = make_env(args=args)
     print("\n" + "*" * 80)
