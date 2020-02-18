@@ -146,7 +146,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 # 待优化
 
 - [ ] [bazel build](https://bazel.build/)
-- [ ] 版本管理
+- [x] 版本管理
 - [ ] unittest 补充
 - [ ] baseline模型共享(百度网盘)
 - [ ] 由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，更新到repo中, 以方便其他人复现, 包含以下信息
