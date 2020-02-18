@@ -18,10 +18,16 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - 2. `docker run -it aiminders/trade bash` (如果下载时间过长，可以选执行第iii步，再执行第ii步)
 - 3. (可选)Build your docker image， 参考 [build.sh](build.sh)
 
-**2\. Mac OS**
+**2\. Mac OSX/Ubuntu**
 
 - 依赖: python3, pip
 - [tgym](https://github.com/iminders/tgym)
+  ```
+  git clone https://github.com/iminders/tgym
+  cd tgym
+  pip install -r requirements.txt
+  pip install -e .
+  ```
 - tbase
 
   ```
@@ -30,10 +36,6 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   pip install -r requirements.txt
   pip install -e .
   ```
-
-**3\. Ubuntu**
-
-- 安装步骤参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
 
 # Features(开发中, 欢迎一起完善)
 
