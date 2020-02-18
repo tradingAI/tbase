@@ -20,7 +20,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 **2\. Mac OSX/Ubuntu**
 
-- 依赖: python3, pip
+- 依赖: `python3, pip`, 如果没有安装可参考[Ubuntu 18.04 Dockerfile](Dockerfile)
 - [tgym](https://github.com/iminders/tgym)
   ```
   git clone https://github.com/iminders/tgym
@@ -36,6 +36,8 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   pip install -r requirements.txt
   pip install -e .
   ```
+
+- 依赖包安装步骤参考: [Ubuntu 18.04 Dockerfile](Dockerfile)
 
 # Features(开发中, 欢迎一起完善)
 
