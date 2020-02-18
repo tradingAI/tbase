@@ -4,24 +4,20 @@ import os
 import random
 
 import numpy as np
+import torch
 
 from tgym.market import Market
 from tgym.scenario import make_env as _make_env
 
 
 def set_global_seeds(seed):
+    if seed is None:
+        seed = np.random.randint(int(1e6))
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
-    try:
-        if seed is None:
-            seed = np.random.randint(int(1e6))
-        import torch
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-        torch.backends.cudnn.deterministic = True
-    except ImportError:
-        print("import torch error, expected torch")
-        pass
+    torch.backends.cudnn.deterministic = True
 
 
 def make_env(args):

@@ -12,7 +12,7 @@ from torch.multiprocessing import set_start_method
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
-from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
+from tbase.common.cmd_util import common_arg_parser, make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
 from tbase.common.torch_utils import device, soft_update
@@ -35,8 +35,6 @@ class Agent(ACAgent):
             self.envs.append(env)
             self.states.append(state)
             self.memorys.append(ReplayBuffer(1e5))
-        # set seed
-        set_global_seeds(args.seed)
 
     def get_agent_name(self):
         code_str = self.args.codes.replace(",", "_")

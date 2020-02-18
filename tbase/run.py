@@ -8,7 +8,7 @@ from importlib import import_module
 
 import torch
 
-from tbase.common.cmd_util import common_arg_parser, make_env
+from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
 from tbase.common.logger import logger
 
 
@@ -38,6 +38,8 @@ def main():
     if args.debug:
         import logging
         logger.setLevel(logging.DEBUG)
+    set_global_seeds(args.seed)
+    logger.info("tbase.run set global_seeds: %d" % args.seed)
     env = make_env(args=args)
     print("\n" + "*" * 80)
     logger.info("Initializing agent by parameters:")
