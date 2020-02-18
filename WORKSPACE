@@ -28,4 +28,4 @@ pip_import(   # or pip3_import
 # Load the central repo's install function from its `//:requirements.bzl` file,
 # and call it.
 load("@my_deps//:requirements.bzl", "pip_install")
-pip_inst
+pip_install()
