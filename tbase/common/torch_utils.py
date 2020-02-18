@@ -1,3 +1,5 @@
+import gc
+
 import torch
 import torch.nn as nn
 
@@ -36,6 +38,7 @@ def soft_update(target, source, tau):
 
 
 def clear_memory():
+    gc.collect()
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
