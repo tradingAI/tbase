@@ -38,8 +38,8 @@ def main():
     if args.debug:
         import logging
         logger.setLevel(logging.DEBUG)
-    set_global_seeds(str(args.seed))
-    logger.info("tbase.run set global_seeds: %d" % args.seed)
+    set_global_seeds(args.seed)
+    logger.info("tbase.run set global_seeds: %s" % str(args.seed))
     env = make_env(args=args)
     print("\n" + "*" * 80)
     logger.info("Initializing agent by parameters:")
