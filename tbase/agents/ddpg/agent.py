@@ -12,7 +12,7 @@ from torch.multiprocessing import set_start_method
 
 from tbase.agents.explore import explore
 from tbase.common.ac_agent import ACAgent
-from tbase.common.cmd_util import common_arg_parser, make_env
+from tbase.common.cmd_util import clear_memory, common_arg_parser, make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
 from tbase.common.torch_utils import device, soft_update
@@ -178,6 +178,7 @@ class Agent(ACAgent):
                 msg += ", iter=%d, avg_reward=%.3f" % (i_iter + 1, avg_reward)
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
+                clear_memory()
 
         self.writer.close()
         logger.info("Final best portfolio: %.3f" % self.best_portfolio)
