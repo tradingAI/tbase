@@ -10,8 +10,8 @@ import torch.multiprocessing as mp
 import torch.nn as nn
 from torch.multiprocessing import set_start_method
 
+from tbase.agents.base.ac_agent import ACAgent
 from tbase.agents.explore import explore
-from tbase.common.ac_agent import ACAgent
 from tbase.common.cmd_util import common_arg_parser, make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer

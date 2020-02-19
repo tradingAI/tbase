@@ -5,7 +5,7 @@ from datetime import datetime
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from tbase.common.base_agent import BaseAgent
+from tbase.agents.base.base_agent import BaseAgent
 from tbase.common.optimizers import get_optimizer_func
 from tbase.network.polices import get_policy_net
 from tbase.network.values import get_value_net

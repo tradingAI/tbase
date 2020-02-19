@@ -38,7 +38,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - 3. (可选)Build your docker image， 参考 [build-docker-image.sh](build-docker-image.sh)
 
 
-# Features(开发中, 欢迎一起完善)
+# Features(In progress)
 
 - [ ] 加速
 
