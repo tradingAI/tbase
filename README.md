@@ -34,7 +34,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 **2\. Docker**
 
 - 1. [docker install](https://docs.docker.com/install/)
-- 2. `docker run -it aiminders/trade bash` (如果下载时间过长，可以选执行第iii步，再执行第ii步)
+- 2. `docker run -it aiminders/trade:tbase bash` (如果下载时间过长，可以选执行第iii步，再执行第ii步)
 - 3. (可选)Build your docker image， 参考 [build-docker-image.sh](build-docker-image.sh)
 
 
