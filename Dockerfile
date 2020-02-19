@@ -49,7 +49,7 @@ RUN cd $CODE_DIR/tgym && rm -rf __pycache__ && \
     pip install -e .
 
 RUN pip install torch==1.4
-RUN pip install tensorflow==2.0.0
+RUN pip install tensorflow==2.0.1
 RUN pip install tensorboard==2.0.0
 
 COPY . $CODE_DIR/tbase
