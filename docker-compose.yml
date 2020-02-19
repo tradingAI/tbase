@@ -1,0 +1,13 @@
+version: '3.0'
+
+services:
+  bazel:
+    image: aiminders/trade:tbase
+    environment:
+      TUSHARE_TOKEN: ${TUSHARE_TOKEN}
+    command:
+      bash /root/tbase/docker-compose.sh
+    volumes:
+      - .:/root/tbase
+      - ${BAZEL_USER_ROOT}:/root/cache/bazel
+      - ${OUTPUT_DIR}:/root/output

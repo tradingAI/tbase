@@ -1,7 +1,5 @@
-FROM ubuntu:18.04
-
-# 更换为阿里云境像
-RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list
+# https://github.com/iminders/services/blob/master/docker-images/aiminders/bazel/latest.Dockerfile
+FROM aiminders/library:bazel.latest
 
 RUN apt-get -y update --fix-missing && \
     apt-get -y upgrade --fix-missing && \
@@ -35,15 +33,10 @@ RUN apt-get -y update --fix-missing && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
 
-# Python
-RUN apt-get install -y python3 python3-pip
-RUN ln -sf /usr/bin/python3 /usr/bin/python
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
-RUN pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com \
-    tushare gym torch matplotlib
+# ARG BUILD_TIMD
+# ENV BUILD_TIMD=${BUILD_TIMD}
 
 ENV CODE_DIR /root/trade
-
 # install tgym
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
@@ -52,15 +45,17 @@ RUN git clone https://github.com/iminders/tgym.git
 # Clean up pycache and pyc files
 RUN cd $CODE_DIR/tgym && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
-    pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com -r requirements.txt && \
+    pip install -r requirements.txt && \
     pip install -e .
 
-ARG BUILD_DATE
-ENV BUILD_DATE=${BUILD_DATE}
+RUN pip install torch==1.4
+RUN pip install tensorflow==2.0.0
+RUN pip install tensorboard==2.0.0
+
 COPY . $CODE_DIR/tbase
 RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
-    pip install -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com -r requirements.txt && \
+    pip install -r requirements.txt && \
     pip install -e .
 RUN rm -rf /root/.cache/pip \
     && find / -type d -name __pycache__ -exec rm -r {} \+
