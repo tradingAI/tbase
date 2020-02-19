@@ -12,13 +12,7 @@ Baselines of reinforcement learning trading agents(PyTorch based).
 export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
-**1\. Docker**
-
-- 1. [docker install](https://docs.docker.com/install/)
-- 2. `docker run -it aiminders/trade bash` (如果下载时间过长，可以选执行第iii步，再执行第ii步)
-- 3. (可选)Build your docker image， 参考 [build.sh](build.sh)
-
-**2\. Mac OSX/Ubuntu**
+**1\. Mac OSX/Ubuntu**
 
 - 依赖: `python3, pip`, 如果没有安装可参考[Ubuntu 18.04 Dockerfile](Dockerfile)
 - [tgym](https://github.com/iminders/tgym)
@@ -36,6 +30,13 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   pip install -r requirements.txt
   pip install -e .
   ```
+
+**2\. Docker**
+
+- 1. [docker install](https://docs.docker.com/install/)
+- 2. `docker run -it aiminders/trade bash` (如果下载时间过长，可以选执行第iii步，再执行第ii步)
+- 3. (可选)Build your docker image， 参考 [build-docker-image.sh](build-docker-image.sh)
+
 
 # Features(开发中, 欢迎一起完善)
 

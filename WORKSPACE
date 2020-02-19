@@ -11,21 +11,11 @@ http_archive(
 load("@bazel_federation//:repositories.bzl", "rules_python_deps")
 
 rules_python_deps()
-load("@bazel_federation//setup:rules_python.bzl",  "rules_python_setup")
-rules_python_setup(use_pip=True)
 
-load("@rules_python//python:pip.bzl", "pip_import")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-load("@rules_python//python:pip.bzl", "pip_import")
-
-# Create a central repo that knows about the dependencies needed for
-# requirements.txt.
-pip_import(   # or pip3_import
-   name = "my_deps",
-   requirements = "//path/to:requirements.txt",
+git_repository(
+    name = "com_github_iminders_tgym",
+    commit = "2967aabc31077304671816a7868688ff9e13256c",
+    remote = "https://github.com/iminders/tgym.git",
 )
-
-# Load the central repo's install function from its `//:requirements.bzl` file,
-# and call it.
-load("@my_deps//:requirements.bzl", "pip_install")
-pip_install()
