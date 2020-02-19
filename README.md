@@ -137,16 +137,26 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 
 - [ ] 夏普比率: 投资组合每承受一单位总风险，会产生多少的超额报酬
 
+## Contribution
+- Fork this repo
+- Add or change code && **Please add tests for changes**
+- Test
+  - step1. 设置[docker-compose](docker-compose.yml)需要的环境变量: BAZEL_USER_ROOT, OUTPUT_DIR, TUSHARE_TOKEN
+  - step2. `docker-compose up`
+- Send pull request
+
 # 如何增加agent
 1. Fork  https://github.com/iminders/tbase
 2. 在tbase.agents下添加目录, 例如: ddpg
 3. 新建agent.py, 在类名为Agent的类中实现你的agent(继承tbase.common.base_agent.BaseAgent)
-4. 测试work
+4. **添加单元测试**
+  - step1. 设置[docker-compose](docker-compose.yml)需要的环境变量: BAZEL_USER_ROOT, OUTPUT_DIR, TUSHARE_TOKEN
+  - step2. `docker-compose up`
 5. 发起pull request
 
 # 待优化
 
-- [ ] [bazel build](https://bazel.build/)
+- [x] [bazel build](https://bazel.build/)
 - [x] 版本管理
 - [ ] unittest 补充
 - [ ] baseline模型共享(百度网盘)
