@@ -11,7 +11,7 @@ import torch.multiprocessing as mp
 from torch.utils.tensorboard import SummaryWriter
 
 from tbase.agents.base.base_agent import BaseAgent
-from tbase.agents.explore import explore
+from tbase.agents.explore import explore, simple_explore
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
@@ -23,6 +23,8 @@ class Agent(BaseAgent):
         # change to random policy
         args.policy_net = "Random"
         super(Agent, self).__init__(env, args, other_args)
+        self.name = self.get_agent_name()
+        self.model_dir = self.get_model_dir()
         self.policy = get_policy_net(env, args)
         TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
         log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
@@ -40,6 +42,7 @@ class Agent(BaseAgent):
             self.envs.append(env)
             self.states.append(state)
             self.memorys.append(ReplayBuffer(1e5))
+        self.queue = mp.Queue()
 
     def get_agent_name(self):
         code_str = self.args.codes.replace(",", "_")
@@ -51,6 +54,21 @@ class Agent(BaseAgent):
         if not os.path.exists(dir):
             os.makedirs(dir)
         return dir
+
+    def simple_explore(self, explore_size, sample_size):
+        t_start = time.time()
+        rewards, portfolio = simple_explore(
+            self.envs[0], self.states[0], self.memorys[0],
+            self.policy, explore_size, self.args.print_action)
+        obs, action, rew, obs_next, done = [], [], [], [], []
+        reward_log = []
+        portfolios = []
+
+        obs, action, rew, obs_next, done = self.memorys[0].sample(sample_size)
+        reward_log.extend(rewards)
+        portfolios.extend(portfolio)
+        used_time = time.time() - t_start
+        return np.mean(reward_log), used_time, portfolios
 
     def explore(self, explore_size, sample_size):
         t_start = time.time()
@@ -85,12 +103,7 @@ class Agent(BaseAgent):
             portfolios.extend(portfolio)
         used_time = time.time() - t_start
 
-        return np.concatenate(tuple(obs), axis=0),\
-            np.concatenate(tuple(action), axis=0), \
-            np.concatenate(tuple(rew), axis=0), \
-            np.concatenate(tuple(obs_next), axis=0), \
-            np.concatenate(tuple(done), axis=0), \
-            np.mean(reward_log), used_time, portfolios
+        return np.mean(reward_log), used_time, portfolios
 
     def learn(self):
         logger.info("learning started")
@@ -98,9 +111,16 @@ class Agent(BaseAgent):
         current_portfolio = 1.0
         t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
-            obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore(
-                explore_size=self.args.explore_size,
-                sample_size=self.args.sample_size)
+            [avg_reward, e_t, ports] = [None] * 3
+            if self.args.num_env == 1:
+                avg_reward, e_t, ports = self.simple_explore(
+                    explore_size=self.args.explore_size,
+                    sample_size=self.args.sample_size)
+            else:
+                avg_reward, e_t, ports = self.explore(
+                    explore_size=self.args.explore_size,
+                    sample_size=self.args.sample_size)
+            # NOTE: Don't need update parameters
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
