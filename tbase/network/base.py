@@ -19,8 +19,8 @@ class BasePolicy(BaseNet):
     def __init__(self):
         super(BasePolicy, self).__init__()
 
-    def action(self):
+    def action(self, *args):
         raise NotImplementedError
 
-    def select_action(self):
+    def select_action(self, *args):
         raise NotImplementedError

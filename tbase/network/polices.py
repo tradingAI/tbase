@@ -3,10 +3,26 @@
 import numpy as np
 import torch
 from torch.autograd import Variable
+from torch.distributions import Normal
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
 from tbase.common.torch_utils import device, fc, get_activation, lstm
 from tbase.network.base import BasePolicy
+
+
+class RandomPolicy(BasePolicy):
+    def __init__(self, action_size):
+        super(RandomPolicy, self).__init__()
+        self.action_size = action_size
+        self.random_process = OrnsteinUhlenbeckProcess(0.1, size=action_size)
+        mean = torch.Tensor([0] * action_size)
+        self.normal = Normal(mean, 1)
+
+    def action(self, obs):
+        return self.normal.sample()
+
+    def select_action(self, obs):
+        return self.action(obs).numpy()
 
 
 class LSTM_MLP(BasePolicy):
