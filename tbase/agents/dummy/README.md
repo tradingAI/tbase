@@ -1,3 +1,3 @@
-# Dummy actor critic agent
+# Dummy agent
 
-action: random
+random action for test.

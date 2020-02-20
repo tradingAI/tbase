@@ -22,7 +22,9 @@ class RandomPolicy(BasePolicy):
         return self.normal.sample()
 
     def select_action(self, obs):
-        return self.action(obs).numpy()
+        action = self.action(obs).numpy() + self.random_process.sample()
+        action = np.clip(action, self.action_low, self.action_high)
+        return action
 
 
 class LSTM_MLP(BasePolicy):
@@ -86,5 +88,7 @@ def get_policy_net(env, args):
             output_size=act_size, num_layers=1, dropout=0.0,
             learning_rate=args.lr, fc_size=200, activation=activation,
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0).to(device)
+    elif args.policy_net == "Random":
+        return RandomPolicy(act_size)
     else:
         raise ValueError("Not implement policy_net: %s" % args.value_net)

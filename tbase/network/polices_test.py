@@ -15,11 +15,11 @@ class TestPolices(unittest.TestCase):
         policy = RandomPolicy(2)
         # action 1
         actual = policy.select_action([])
-        expected = [1.5409960746765137, -0.293428897857666]
+        expected = [1.0, -0.2534131770209437]
         self.assertEqual(expected, list(actual.astype(np.float)))
         # action 2
         actual = policy.select_action([])
-        expected = [-2.1787893772125244, 0.5684312582015991]
+        expected = [-1.0, 0.8324962832376306]
         self.assertEqual(expected, list(actual.astype(np.float)))
 
 
