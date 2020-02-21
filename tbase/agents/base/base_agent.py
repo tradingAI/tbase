@@ -10,7 +10,8 @@ class BaseAgent(nn.Module):
         super(BaseAgent, self).__init__()
         self.args = args
         TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
-        log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
+        module_name = self.get_module_name()
+        log_dir = os.path.join(args.tensorboard_dir, module_name, TIMESTAMP)
         self.writer = SummaryWriter(log_dir)
         self.best_portfolio = -1.0
         self.run_id = args.run_id
