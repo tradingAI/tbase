@@ -1,12 +1,18 @@
 # -*- coding:utf-8 -*-
+import math
 import os
-from datetime import datetime
+import time
 
+import numpy as np
 import torch
-from torch.utils.tensorboard import SummaryWriter
+import torch.multiprocessing as mp
 
 from tbase.agents.base.base_agent import BaseAgent
+from tbase.agents.base.explore import explore, simple_explore
+from tbase.common.cmd_util import make_env
+from tbase.common.logger import logger
 from tbase.common.optimizers import get_optimizer_func
+from tbase.common.replay_buffer import ReplayBuffer
 from tbase.network.polices import get_policy_net
 from tbase.network.values import get_value_net
 
@@ -15,6 +21,7 @@ from tbase.network.values import get_value_net
 class ACAgent(BaseAgent):
     def __init__(self, env, args, *other_args):
         super(ACAgent, self).__init__(env, args, other_args)
+        self.num_env = args.num_env
         optimizer_fn = get_optimizer_func(args.opt_fn)()
         # policy net
         self.policy = get_policy_net(env, args)
@@ -28,11 +35,17 @@ class ACAgent(BaseAgent):
         self.value_opt = optimizer_fn(
             params=filter(lambda p: p.requires_grad, self.value.parameters()),
             lr=self.args.lr)
-        TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
-        log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
-        self.writer = SummaryWriter(log_dir)
-        self.best_portfolio = -1.0
-        self.run_id = args.run_id
+        if self.num_env > 1:
+            self.queue = mp.Queue()
+        self.envs = []
+        self.states = []
+        self.memorys = []
+        for i in range(self.num_env):
+            env = make_env(args=args)
+            state = env.reset()
+            self.envs.append(env)
+            self.states.append(state)
+            self.memorys.append(ReplayBuffer(1e5))
 
     def save(self, dir):
         torch.save(
@@ -56,13 +69,77 @@ class ACAgent(BaseAgent):
                 dir, self.name, self.run_id))
         )
 
-    # 探索与搜集samples
-    def explore(self, explore_size, sample_size):
-        raise NotImplementedError
+    # 非多进程方式探索与搜集samples
+    def simple_explore(self, explore_size=None, sample_size=None):
+        t_start = time.time()
+        if explore_size is None:
+            explore_size = self.args.explore_size
+        if sample_size is None:
+            sample_size = self.args.sample_size
+
+        reward_log, portfolios = simple_explore(
+            self.envs[0], self.states[0], self.memorys[0],
+            self.policy, explore_size, self.args.print_action)
+
+        obs, action, rew, obs_next, done = self.memorys[0].sample(
+            sample_size)
+
+        used_time = time.time() - t_start
+
+        return obs, action, rew, obs_next, done, \
+            np.mean(reward_log), used_time, portfolios
+
+    # 多进程方式探索与搜集samples
+    def explore(self, explore_size=None, sample_size=None):
+        t_start = time.time()
+        if explore_size is None:
+            explore_size = self.args.explore_size
+        if sample_size is None:
+            sample_size = self.args.sample_size
+        thread_size = int(math.floor(explore_size / self.num_env))
+        thread_sample_size = int(math.floor(sample_size / self.num_env))
+        workers = []
+        for i in range(self.num_env):
+            worker_args = (i, self.queue, self.envs[i], self.states[i],
+                           self.memorys[i], self.policy, thread_size,
+                           self.args.print_action)
+            workers.append(mp.Process(target=explore, args=worker_args))
+        for worker in workers:
+            worker.start()
+
+        obs, action, rew, obs_next, done = [], [], [], [], []
+        reward_log = []
+        portfolios = []
+        for _ in range(self.num_env):
+            i, _,  memory, env, state, rewards, portfolio = self.queue.get()
+            self.memorys[i] = memory
+            self.envs[i] = env
+            self.states[i] = state
+            _obs, _action, _rew, _obs_next, _done = self.memorys[i].sample(
+                thread_sample_size)
+            obs.append(_obs)
+            action.append(_action)
+            rew.append(_rew)
+            obs_next.append(_obs_next)
+            done.append(_done)
+            reward_log.extend(rewards)
+            portfolios.extend(portfolio)
+        used_time = time.time() - t_start
+
+        return np.concatenate(tuple(obs), axis=0),\
+            np.concatenate(tuple(action), axis=0), \
+            np.concatenate(tuple(rew), axis=0), \
+            np.concatenate(tuple(obs_next), axis=0), \
+            np.concatenate(tuple(done), axis=0), \
+            np.mean(reward_log), used_time, portfolios
 
     def learn(*args):
         raise NotImplementedError
 
-    def print_net(self, net):
-        for param_tensor in net.state_dict():
-            print(param_tensor, "\t", net.state_dict()[param_tensor].size())
+    def warm_up(self):
+        logger.info("warmming up: %d" % self.args.warm_up)
+        if self.num_env > 1:
+            self.explore(self.args.warm_up, self.args.sample_size)
+        else:
+            self.simple_explore(self.args.warm_up, self.args.sample_size)
+        logger.info("warm up: %d finished" % self.args.warm_up)

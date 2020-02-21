@@ -1,17 +1,14 @@
 # -*- coding:utf-8 -*-
 
 import math
-import os
 import time
-from datetime import datetime
 
 import numpy as np
 import torch
 import torch.multiprocessing as mp
-from torch.utils.tensorboard import SummaryWriter
 
 from tbase.agents.base.base_agent import BaseAgent
-from tbase.agents.explore import explore, simple_explore
+from tbase.agents.base.explore import explore, simple_explore
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
@@ -23,14 +20,7 @@ class Agent(BaseAgent):
         # change to random policy
         args.policy_net = "Random"
         super(Agent, self).__init__(env, args, other_args)
-        self.name = self.get_agent_name()
-        self.model_dir = self.get_model_dir()
         self.policy = get_policy_net(env, args)
-        TIMESTAMP = "{0:%Y-%m-%dT%H-%M-%S/}".format(datetime.now())
-        log_dir = os.path.join(args.tensorboard_dir, TIMESTAMP)
-        self.writer = SummaryWriter(log_dir)
-        self.best_portfolio = -1.0
-        self.run_id = args.run_id
 
         self.num_env = args.num_env
         self.envs = []
@@ -44,37 +34,19 @@ class Agent(BaseAgent):
             self.memorys.append(ReplayBuffer(1e5))
         self.queue = mp.Queue()
 
-    def get_agent_name(self):
-        code_str = self.args.codes.replace(",", "_")
-        name = "dummy_" + code_str
-        return name
-
-    def get_model_dir(self):
-        dir = os.path.join(self.args.model_dir, self.name)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        return dir
-
-    def simple_explore(self, explore_size, sample_size):
+    def simple_explore(self):
         t_start = time.time()
-        rewards, portfolio = simple_explore(
+        reward_log, portfolios = simple_explore(
             self.envs[0], self.states[0], self.memorys[0],
-            self.policy, explore_size, self.args.print_action)
-        obs, action, rew, obs_next, done = [], [], [], [], []
-        reward_log = []
-        portfolios = []
-
-        obs, action, rew, obs_next, done = self.memorys[0].sample(sample_size)
-        reward_log.extend(rewards)
-        portfolios.extend(portfolio)
+            self.policy, self.args.explore_size, self.args.print_action)
         used_time = time.time() - t_start
         return np.mean(reward_log), used_time, portfolios
 
-    def explore(self, explore_size, sample_size):
+    def explore(self):
         t_start = time.time()
         queue = mp.Queue()
-        thread_size = int(math.floor(explore_size / self.num_env))
-        thread_sample_size = int(math.floor(sample_size / self.num_env))
+        thread_size = int(math.floor(self.args.explore_size / self.num_env))
+
         workers = []
         for i in range(self.num_env):
             worker_args = (i, queue, self.envs[i], self.states[i],
@@ -84,21 +56,13 @@ class Agent(BaseAgent):
         for worker in workers:
             worker.start()
 
-        obs, action, rew, obs_next, done = [], [], [], [], []
         reward_log = []
         portfolios = []
         for _ in range(self.num_env):
-            i, next_idx,  memory, env, state, rewards, portfolio = queue.get()
+            i, _,  memory, env, state, rewards, portfolio = queue.get()
             self.memorys[i] = memory
             self.envs[i] = env
             self.states[i] = state
-            _obs, _action, _rew, _obs_next, _done = self.memorys[i].sample(
-                thread_sample_size)
-            obs.append(_obs)
-            action.append(_action)
-            rew.append(_rew)
-            obs_next.append(_obs_next)
-            done.append(_done)
             reward_log.extend(rewards)
             portfolios.extend(portfolio)
         used_time = time.time() - t_start
@@ -113,13 +77,9 @@ class Agent(BaseAgent):
         for i_iter in range(self.args.max_iter_num):
             [avg_reward, e_t, ports] = [None] * 3
             if self.args.num_env == 1:
-                avg_reward, e_t, ports = self.simple_explore(
-                    explore_size=self.args.explore_size,
-                    sample_size=self.args.sample_size)
+                avg_reward, e_t, ports = self.simple_explore()
             else:
-                avg_reward, e_t, ports = self.explore(
-                    explore_size=self.args.explore_size,
-                    sample_size=self.args.sample_size)
+                avg_reward, e_t, ports = self.explore()
             # NOTE: Don't need update parameters
             for p in ports:
                 i += 1

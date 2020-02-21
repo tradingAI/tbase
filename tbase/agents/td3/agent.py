@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import math
-import os
 import time
 
 import numpy as np
@@ -10,7 +9,7 @@ import torch.nn as nn
 from torch.multiprocessing import set_start_method
 
 from tbase.agents.base.ac_agent import ACAgent
-from tbase.agents.explore import explore
+from tbase.agents.base.explore import explore
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
@@ -20,8 +19,6 @@ from tbase.common.torch_utils import clear_memory, device, soft_update
 class Agent(ACAgent):
     def __init__(self, env=None, args=None, noise_clip=0.2, policy_noise=0.2):
         super(Agent, self).__init__(env, args)
-        self.name = self.get_agent_name()
-        self.model_dir = self.get_model_dir()
         self.noise_clip = noise_clip
         self.policy_freq = 2
         self.policy_noise = policy_noise
@@ -36,58 +33,7 @@ class Agent(ACAgent):
             self.envs.append(env)
             self.states.append(state)
             self.memorys.append(ReplayBuffer(1e5))
-
-    def get_agent_name(self):
-        code_str = self.args.codes.replace(",", "_")
-        name = "td3_" + code_str
-        return name
-
-    def get_model_dir(self):
-        dir = os.path.join(self.args.model_dir, self.name)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        return dir
-
-    # 探索与搜集samples
-    def explore(self, explore_size, sample_size):
-        t_start = time.time()
-        queue = mp.Queue()
-        thread_size = int(math.floor(explore_size / self.num_env))
-        thread_sample_size = int(math.floor(sample_size / self.num_env))
-        workers = []
-        for i in range(self.num_env):
-            worker_args = (i, queue, self.envs[i], self.states[i],
-                           self.memorys[i], self.policy, thread_size,
-                           self.args.print_action)
-            workers.append(mp.Process(target=explore, args=worker_args))
-        for worker in workers:
-            worker.start()
-
-        obs, action, rew, obs_next, done = [], [], [], [], []
-        reward_log = []
-        portfolios = []
-        for _ in workers:
-            i, next_idx,  memory, env, state, rewards, portfolio = queue.get()
-            self.memorys[i] = memory
-            self.envs[i] = env
-            self.states[i] = state
-            _obs, _action, _rew, _obs_next, _done = self.memorys[i].sample(
-                thread_sample_size)
-            obs.append(_obs)
-            action.append(_action)
-            rew.append(_rew)
-            obs_next.append(_obs_next)
-            done.append(_done)
-            reward_log.extend(rewards)
-            portfolios.extend(portfolio)
-        used_time = time.time() - t_start
-
-        return np.concatenate(tuple(obs), axis=0),\
-            np.concatenate(tuple(action), axis=0), \
-            np.concatenate(tuple(rew), axis=0), \
-            np.concatenate(tuple(obs_next), axis=0), \
-            np.concatenate(tuple(done), axis=0), \
-            np.mean(reward_log), used_time, portfolios
+        self.queue = mp.Queue()
 
     def update_params(self, _obs, _action, _rew, _obs_next, _done, n_iter):
         t_start = time.time()
@@ -145,22 +91,21 @@ class Agent(ACAgent):
         return value_loss, policy_loss, loss_reg, act_reg, used_time
 
     def learn(self):
-        logger.info("warmming up: %d" % self.args.warm_up)
-        set_start_method('spawn')
-        self.policy.share_memory()
-        self.target_policy.share_memory()
-        self.value.share_memory()
-        self.target_value.share_memory()
-        self.explore(self.args.warm_up, self.args.sample_size)
-        logger.info("warm up: %d finished" % self.args.warm_up)
+        if torch.cuda.is_available() and self.args.num_env > 1:
+            set_start_method('spawn')
+        if self.args.num_env > 1:
+            self.policy.share_memory()
+            # TODO: check and remove
+            # self.target_policy.share_memory()
+            # self.value.share_memory()
+            # self.target_value.share_memory()
+        self.warm_up()
         logger.info("learning started")
         i = 0
         current_portfolio = 1.0
         t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
-            obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore(
-                explore_size=self.args.explore_size,
-                sample_size=self.args.sample_size)
+            obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore()
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
