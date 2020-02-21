@@ -5,7 +5,7 @@ Note(wen):
 - 分别GPU和CPU上运行的结果并不一致, [PyTorch Reproducibility](https://pytorch.org/docs/stable/notes/randomness.html)
 - 在相同类型设备(GPU/CPU)上运行, 完美复现
 
-设置不用多进程的方式训练: ```--num_env 1``
+设置“非多进程”的方式训练: ```--num_env 1``
 
 以`ddpg`为例:
 ```
