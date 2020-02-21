@@ -11,3 +11,13 @@ py_library(
         "//tbase/common:py_default_lib",
     ],
 )
+
+py_test(
+    name = "polices_test",
+    srcs = [
+        "polices_test.py",
+    ],
+    deps = [
+        ":py_default_lib",
+    ],
+)

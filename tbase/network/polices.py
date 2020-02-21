@@ -3,10 +3,28 @@
 import numpy as np
 import torch
 from torch.autograd import Variable
+from torch.distributions import Normal
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
 from tbase.common.torch_utils import device, fc, get_activation, lstm
 from tbase.network.base import BasePolicy
+
+
+class RandomPolicy(BasePolicy):
+    def __init__(self, action_size):
+        super(RandomPolicy, self).__init__()
+        self.action_size = action_size
+        self.random_process = OrnsteinUhlenbeckProcess(0.1, size=action_size)
+        mean = torch.Tensor([0] * action_size)
+        self.normal = Normal(mean, 1)
+
+    def action(self, obs):
+        return self.normal.sample()
+
+    def select_action(self, obs):
+        action = self.action(obs).numpy() + self.random_process.sample()
+        action = np.clip(action, self.action_low, self.action_high)
+        return action
 
 
 class LSTM_MLP(BasePolicy):
@@ -70,5 +88,7 @@ def get_policy_net(env, args):
             output_size=act_size, num_layers=1, dropout=0.0,
             learning_rate=args.lr, fc_size=200, activation=activation,
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0).to(device)
+    elif args.policy_net == "Random":
+        return RandomPolicy(act_size)
     else:
         raise ValueError("Not implement policy_net: %s" % args.value_net)
