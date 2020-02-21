@@ -73,7 +73,7 @@ def common_arg_parser():
                         help="how many days shoud look back")
     parser.add_argument("--data_dir", type=str, default='/tmp/tgym',
                         help="directory for tgym store trade data")
-    parser.add_argument('--num_env', default=2, type=int,
+    parser.add_argument('--num_env', default=1, type=int,
                         help='Number of environment copies run in parallel.')
     # 模型参数
     parser.add_argument('--policy_net', default='LSTM_MLP',
