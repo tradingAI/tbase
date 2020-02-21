@@ -39,7 +39,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 
 # Features(In progress)
-
+- [x] 可以完美复现训练过程, [How?](docs/reproducible.md)
 - [ ] 加速
 
   - [x] 多进程CPU并行: 多进程运行独立的Enviroment进行探索
@@ -100,6 +100,7 @@ python3 -m tbase.run --alg ddpg --num_env 4 --gamma 0.53 --seed 9 --print_action
 - reward_fn: "daily_return_with_chl_penalty", env reward function
 - run_id: "1", 运行序号, 方便查看相同参数多次运行结果差异
 - [其他参数](tbase/common/cmd_util.py)
+
 
 **Defalut policy net setting(actor)**
 
