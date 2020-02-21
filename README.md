@@ -34,8 +34,10 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 **2\. Docker**
 
 - 1. [docker install](https://docs.docker.com/install/)
-- 2. `docker run -it aiminders/trade:tbase bash` (如果下载时间过长，可以先执行第iii步，再执行第ii步)
-- 3. (可选)Build your docker image， 参考 [build-docker-image.sh](build-docker-image.sh)
+- 2. Build your docker image: `bash build-docker-image.sh`, 也可以直接从docker hub上pull
+- 3. 手动运行
+  - `docker run -it -v 本项目绝对目录:/root/trade/tbase aiminders/trade:tbase bash`
+  - 'python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0'
 
 
 # Features(In progress)
