@@ -66,10 +66,6 @@ class Agent(ACAgent):
     def learn(self):
         if self.args.num_env > 1:
             self.policy.share_memory()
-            # TODO: check and remove
-            # self.target_policy.share_memory()
-            # self.value.share_memory()
-            # self.target_value.share_memory()
         self.warm_up()
         logger.info("learning started")
         i = 0
