@@ -75,6 +75,7 @@ def common_arg_parser():
                         help="directory for tgym store trade data")
     parser.add_argument('--num_env', default=1, type=int,
                         help='Number of environment copies run in parallel.')
+    parser.add_argument('--device', type=str, default=None)
     # 模型参数
     parser.add_argument('--policy_net', default='LSTM_MLP',
                         help='network type (LSTM_MLP)')

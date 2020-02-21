@@ -2,14 +2,11 @@
 import time
 
 import torch
-import torch.multiprocessing as mp
 import torch.nn as nn
 
 from tbase.agents.base.ac_agent import ACAgent
-from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
-from tbase.common.replay_buffer import ReplayBuffer
-from tbase.common.torch_utils import clear_memory, device, soft_update
+from tbase.common.torch_utils import clear_memory, soft_update
 
 
 class Agent(ACAgent):
@@ -19,31 +16,23 @@ class Agent(ACAgent):
         self.policy_freq = 2
         self.policy_noise = policy_noise
         self.criterion = torch.nn.MSELoss()
-        self.num_env = args.num_env
-        self.envs = []
-        self.states = []
-        self.memorys = []
-        for i in range(self.num_env):
-            env = make_env(args=args)
-            state = env.reset()
-            self.envs.append(env)
-            self.states.append(state)
-            self.memorys.append(ReplayBuffer(1e5))
-        self.queue = mp.Queue()
 
     def update_params(self, _obs, _action, _rew, _obs_next, _done, n_iter):
         t_start = time.time()
         # --use the date to update the value
-        reward = torch.tensor(_rew, device=device, dtype=torch.float)
+        reward = torch.tensor(_rew, device=self.policy.device,
+                              dtype=torch.float)
         reward = reward.reshape(-1, 1)
-        done = torch.tensor(~_done, device=device, dtype=torch.float)
+        done = torch.tensor(~_done, device=self.policy.device,
+                            dtype=torch.float)
         done = done.reshape(-1, 1)
-        action = torch.from_numpy(_action).to(device, torch.float)
+        action = torch.from_numpy(_action).to(self.policy.device, torch.float)
         action = action.reshape(action.shape[0], -1)
         # obs 只取最后一天数据做为输入
-        obs = torch.from_numpy(_obs).permute(1, 0, 2).to(device, torch.float)
-        obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(device,
-                                                                   torch.float)
+        obs = torch.from_numpy(_obs).permute(1, 0, 2).to(self.policy.device,
+                                                         torch.float)
+        obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(
+            self.policy.device, torch.float)
         noise = (torch.randn_like(action) * self.policy_noise).clamp(
             -self.noise_clip, self.noise_clip)
 
@@ -89,10 +78,7 @@ class Agent(ACAgent):
     def learn(self):
         if self.args.num_env > 1:
             self.policy.share_memory()
-            # TODO: check and remove
-            # self.target_policy.share_memory()
-            # self.value.share_memory()
-            # self.target_value.share_memory()
+
         self.warm_up()
         logger.info("learning started")
         i = 0

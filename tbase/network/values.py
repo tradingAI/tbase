@@ -3,7 +3,7 @@
 import torch
 from torch.autograd import Variable
 
-from tbase.common.torch_utils import device, fc, get_activation, lstm
+from tbase.common.torch_utils import default_device, fc, get_activation, lstm
 from tbase.network.base import BaseNet
 
 
@@ -23,8 +23,9 @@ class DoubleValue(BaseNet):
 
 
 class LSTM_Merge_MLP(BaseNet):
-    def __init__(self, seq_len=11, obs_input_size=10, rnn_hidden_size=300,
-                 num_layers=1, dropout=0.0, learning_rate=0.001,
+    def __init__(self, device=None, seq_len=11, obs_input_size=10,
+                 rnn_hidden_size=300, num_layers=1, dropout=0.0,
+                 learning_rate=0.001,
                  act_input_size=4, act_fc1_size=200,
                  act_fc2_size=100, output_size=1,  activation=None):
         super(LSTM_Merge_MLP, self).__init__()
@@ -71,6 +72,9 @@ def get_single_value_net(env, args):
     input_size = env.input_size
     act_size = env.action_space
     activation = get_activation(args.activation)
+    device = default_device
+    if not(args.device is None):
+        device = args.device
     if args.value_net == "LSTM_Merge_MLP":
         return LSTM_Merge_MLP(
             seq_len=seq_len, obs_input_size=input_size, rnn_hidden_size=300,

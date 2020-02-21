@@ -137,9 +137,10 @@ class ACAgent(BaseAgent):
         raise NotImplementedError
 
     def warm_up(self):
-        logger.info("warmming up: %d" % self.args.warm_up)
+        logger.info(
+            "warmming up: explore %d days in enviroment" % self.args.warm_up)
         if self.num_env > 1:
             self.explore(self.args.warm_up, self.args.sample_size)
         else:
             self.simple_explore(self.args.warm_up, self.args.sample_size)
-        logger.info("warm up: %d finished" % self.args.warm_up)
+        logger.info("warm up: finished")

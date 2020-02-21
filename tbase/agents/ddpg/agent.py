@@ -7,7 +7,7 @@ import torch.nn as nn
 
 from tbase.agents.base.ac_agent import ACAgent
 from tbase.common.logger import logger
-from tbase.common.torch_utils import clear_memory, device, soft_update
+from tbase.common.torch_utils import clear_memory, soft_update
 
 
 class Agent(ACAgent):
@@ -17,16 +17,20 @@ class Agent(ACAgent):
     def update_params(self, _obs, _action, _rew, _obs_next, _done):
         t_start = time.time()
         # --use the date to update the value
-        reward = torch.tensor(_rew, device=device, dtype=torch.float)
+        reward = torch.tensor(_rew, device=self.policy.device,
+                              dtype=torch.float)
         reward = reward.reshape(-1, 1)
-        done = torch.tensor(~_done, device=device, dtype=torch.float)
+        done = torch.tensor(~_done, device=self.policy.device,
+
+                            dtype=torch.float)
         done = done.reshape(-1, 1)
-        action = torch.from_numpy(_action).to(device, torch.float)
+        action = torch.from_numpy(_action).to(self.policy.device, torch.float)
         action = action.reshape(action.shape[0], -1)
         # obs 只取最后一天数据做为输入
-        obs = torch.from_numpy(_obs).permute(1, 0, 2).to(device, torch.float)
-        obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(device,
-                                                                   torch.float)
+        obs = torch.from_numpy(_obs).permute(1, 0, 2).to(
+            self.policy.device, torch.float)
+        obs_next = torch.from_numpy(_obs_next).permute(1, 0, 2).to(
+            self.policy.device, torch.float)
         target_act_next = self.target_policy.action(obs_next).detach()
         target_q_next = self.target_value.forward(obs_next, target_act_next)
         target_q = reward + torch.mul(target_q_next, (done * self.args.gamma))
@@ -107,7 +111,7 @@ class Agent(ACAgent):
                 msg += ", iter=%d, avg_reward=%.3f" % (i_iter + 1, avg_reward)
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
-                clear_memory()
+            clear_memory()
 
         self.writer.close()
         logger.info("Final best portfolio: %.3f" % self.best_portfolio)

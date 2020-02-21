@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from torch.distributions import Normal
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
-from tbase.common.torch_utils import device, fc, get_activation, lstm
+from tbase.common.torch_utils import default_device, fc, get_activation, lstm
 from tbase.network.base import BasePolicy
 
 
@@ -28,11 +28,11 @@ class RandomPolicy(BasePolicy):
 
 
 class LSTM_MLP(BasePolicy):
-    def __init__(self, seq_len=11, input_size=10, hidden_size=300,
+    def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
                  output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
                  fc_size=200, activation=None, ou_theta=0.15,
                  ou_sigma=0.2, ou_mu=0):
-        super(LSTM_MLP, self).__init__()
+        super(LSTM_MLP, self).__init__(device)
         self.seq_len = seq_len
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -82,9 +82,13 @@ def get_policy_net(env, args):
     input_size = env.input_size
     act_size = env.action_space
     activation = get_activation(args.activation)
+    device = default_device
+    if not(args.device is None):
+        device = args.device
     if args.policy_net == "LSTM_MLP":
         return LSTM_MLP(
-            seq_len=seq_len, input_size=input_size, hidden_size=300,
+            device=device, seq_len=seq_len,
+            input_size=input_size, hidden_size=300,
             output_size=act_size, num_layers=1, dropout=0.0,
             learning_rate=args.lr, fc_size=200, activation=activation,
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0).to(device)

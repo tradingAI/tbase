@@ -3,7 +3,7 @@ import gc
 import torch
 import torch.nn as nn
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+default_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 # full connect layer

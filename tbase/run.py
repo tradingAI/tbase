@@ -37,7 +37,7 @@ def main():
         logger.setLevel(logging.DEBUG)
     set_global_seeds(args.seed)
     logger.info("tbase.run set global_seeds: %s" % str(args.seed))
-    if torch.cuda.is_available() and args.num_env > 1:
+    if torch.cuda.is_available() and args.num_env > 1 and args.device != 'cpu':
         set_start_method('spawn')
     env = make_env(args=args)
     print("\n" + "*" * 80)
