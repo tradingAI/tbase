@@ -4,7 +4,6 @@ import time
 import torch
 import torch.multiprocessing as mp
 import torch.nn as nn
-from torch.multiprocessing import set_start_method
 
 from tbase.agents.base.ac_agent import ACAgent
 from tbase.common.cmd_util import make_env
