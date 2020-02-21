@@ -4,8 +4,6 @@
 - Baselines post: TODO
 - `python3 -m tbase.run --alg=td3 --scenario=average --max_iter_num=500` runs the algorithm for about 122000 days = 500 episode on a tgym.average environment. See help (`-h`) for more options.
 
-# Defalut Policy net setting(actor)
-![actor](images/policy.png)
+# Portfolio: td3 vs ddpg
 
-# Defalut Value setting(critic)
-![critic](images/value.png)
+![td3_vs_ddpg](images/td3_vs_ddpg.png)
