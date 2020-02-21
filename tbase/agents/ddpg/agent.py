@@ -61,8 +61,8 @@ class Agent(ACAgent):
         return value_loss, policy_loss, loss_reg, act_reg, used_time
 
     def learn(self):
-        if torch.cuda.is_available() and self.args.num_env > 1:
-            set_start_method('spawn')
+        # if torch.cuda.is_available() and self.args.num_env > 1:
+        #     set_start_method('spawn')
         if self.args.num_env > 1:
             self.policy.share_memory()
             # TODO: check and remove

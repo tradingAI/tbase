@@ -1,15 +1,12 @@
 # -*- coding:utf-8 -*-
-import math
 import time
 
-import numpy as np
 import torch
 import torch.multiprocessing as mp
 import torch.nn as nn
 from torch.multiprocessing import set_start_method
 
 from tbase.agents.base.ac_agent import ACAgent
-from tbase.agents.base.explore import explore
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.replay_buffer import ReplayBuffer
@@ -91,8 +88,8 @@ class Agent(ACAgent):
         return value_loss, policy_loss, loss_reg, act_reg, used_time
 
     def learn(self):
-        if torch.cuda.is_available() and self.args.num_env > 1:
-            set_start_method('spawn')
+        # if torch.cuda.is_available() and self.args.num_env > 1:
+        #     set_start_method('spawn')
         if self.args.num_env > 1:
             self.policy.share_memory()
             # TODO: check and remove
@@ -105,7 +102,12 @@ class Agent(ACAgent):
         current_portfolio = 1.0
         t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
-            obs, act, rew, obs_t, done, avg_reward, e_t, ports = self.explore()
+            if self.args.num_env == 1:
+                obs, act, rew, obs_t, done, avg_reward, e_t, ports = \
+                    self.simple_explore()
+            else:
+                obs, act, rew, obs_t, done, avg_reward, e_t, ports = \
+                    self.explore()
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
