@@ -94,7 +94,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - start: "20190101", 训练开始时间
 - end: "201901231", 训练结束时间
 - max_iter_num: "500", 训练轮数
-- num_env: "2", 并行进程数
+- num_env: "1", 并行进程数, 当`num_env=1`时，不使用多进程方式运行
 - seed: "None", 系统随机种子
 - print_action: "False", 随机打印action的值，方便查看action分布状况
 - reward_fn: "daily_return_with_chl_penalty", env reward function
