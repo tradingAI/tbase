@@ -77,6 +77,7 @@ def get_single_value_net(env, args):
         device = args.device
     if args.value_net == "LSTM_Merge_MLP":
         return LSTM_Merge_MLP(
+            device=device,
             seq_len=seq_len, obs_input_size=input_size, rnn_hidden_size=300,
             num_layers=1, dropout=0.0, learning_rate=args.lr,
             act_input_size=act_size,
