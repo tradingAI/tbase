@@ -16,7 +16,7 @@ def explore(pid, queue, env, state, memory, policy, size, print_actions):
             torch.float)
         with torch.no_grad():
             action = policy.select_action(state_var)
-        action = action.astype(np.float)
+            action = action.astype(np.float)
         if print_actions:
             if random.random() < 0.001:
                 print("tbase.agents.ddpg.agent action:" + str(action))
@@ -43,7 +43,7 @@ def simple_explore(env, state, memory, policy, size, print_actions):
             torch.float)
         with torch.no_grad():
             action = policy.select_action(state_var)
-        action = action.astype(np.float)
+            action = action.astype(np.float)
         if print_actions:
             if random.random() < 0.001:
                 print("tbase.agents.ddpg.agent action:" + str(action))
