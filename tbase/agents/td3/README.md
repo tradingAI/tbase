@@ -2,7 +2,7 @@
 
 - Original paper: <https://arxiv.org/pdf/1802.09477.pdf>
 - Baselines post: TODO
-- `python3 -m tbase.run --alg=td3 --scenario=average --max_iter_num=500` runs the algorithm for about 122000 days = 500 episode on a tgym.average environment. See help (`-h`) for more options.
+- `python3 -m tbase.run --alg=td3 --scenario=average --max_iter_num=500 --seed 9` runs the algorithm for about 122000 days = 500 episode on a tgym.average environment. See help (`-h`) for more options.
 
 # Portfolio: td3 vs ddpg
 
