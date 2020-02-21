@@ -28,7 +28,7 @@ class LSTM_Merge_MLP(BaseNet):
                  learning_rate=0.001,
                  act_input_size=4, act_fc1_size=200,
                  act_fc2_size=100, output_size=1,  activation=None):
-        super(LSTM_Merge_MLP, self).__init__()
+        super(LSTM_Merge_MLP, self).__init__(device)
         self.seq_len = seq_len
         self.obs_input_size = obs_input_size
         self.rnn_hidden_size = rnn_hidden_size
