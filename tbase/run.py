@@ -6,6 +6,9 @@
 """
 from importlib import import_module
 
+import torch
+from torch.multiprocessing import set_start_method
+
 from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
 from tbase.common.logger import logger
 
@@ -34,6 +37,8 @@ def main():
         logger.setLevel(logging.DEBUG)
     set_global_seeds(args.seed)
     logger.info("tbase.run set global_seeds: %s" % str(args.seed))
+    if torch.cuda.is_available() and args.num_env > 1:
+        set_start_method('spawn')
     env = make_env(args=args)
     print("\n" + "*" * 80)
     logger.info("Initializing agent by parameters:")
