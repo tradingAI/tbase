@@ -1,6 +1,6 @@
 # tbase
 
-Baselines of reinforcement learning trading agents(PyTorch based).
+基于强化学习的交易算法Baselines(Pytorch实现). 旨在为大家提供一个在中国股市上可复现的算法Baselines.
 
 支持环境： Python 3.5–3.7
 
