@@ -1,6 +1,11 @@
 dist: bionic
 language: bash
 
+env:
+  global:
+    - BAZEL_USER_ROOT=/root/cache/bazel
+    - OUTPUT_DIR=/root/output
+
 services:
   - docker
 
