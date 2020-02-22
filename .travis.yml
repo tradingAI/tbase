@@ -1,13 +1,13 @@
 dist: bionic
 language: bash
 
+services:
+  - docker
+
 env:
   global:
     - BAZEL_USER_ROOT=/root/cache/bazel
     - OUTPUT_DIR=/root/output
-
-services:
-  - docker
 
 script:
   - docker-compose up
