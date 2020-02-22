@@ -162,7 +162,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 - [x] [bazel build](https://bazel.build/)
 - [x] 版本管理
-- [ ] Travis CI
+- [x] Travis CI
 - [ ] 全面的unittest
 - [ ] Blog Post && baseline模型共享(百度网盘)
 - [ ] 由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，更新到repo中, 以方便其他人复现, 包含以下信息
