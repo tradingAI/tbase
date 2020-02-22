@@ -1,4 +1,4 @@
-# TD3
+# A2C
 
 - Original paper: <https://arxiv.org/pdf/1602.01783.pdf>
 - Baselines post: TODO
