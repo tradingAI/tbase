@@ -126,7 +126,11 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 # 评估
 
 - [x] 训练周期内的评估指标
-- [ ] 模型在训练周期外(评估周期)的评估指标
+- [x] 模型在训练周期外(评估周期)的评估指标
+  ```
+  # lookback=10， 若测试从20200101开始, 则eval_start往前推10个交易日
+  python3 -m tbase.run --alg ddpg --eval --eval_start 20191218 --eval_end 20200223
+  ```
 - [ ] 滑动窗口更新模型, 在评估周期内，每隔一个窗口T，重新训练一次模型，当T>评估周期时，等价于固定模型
 
 ## 评估指标
