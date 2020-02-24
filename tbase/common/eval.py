@@ -30,13 +30,13 @@ def annualized_return(portfolio, n_days):
     return round(r, 3)
 
 
-def sharpe_ratio(returns, risk_free=0.00011464285714,  periods=252):
+def sharpe_ratio(returns, risk_free=0.000114563492,  periods=252):
     """
     夏普比率
     args:
         returns: 每日收益率, list
-        risk_free: 无风险收益率(2020-02-24 国债利率:0.02889), 转化为日化无风险收益率
-            用 0.02889 / 252 =  0.00011464285714
+        risk_free: 无风险收益率(2020-02-24 国债利率:0.02887), 转化为日化无风险收益率
+            用 0.02889 / 252 =  0.00011456349206349206
             NOTE(wen): 这里没有用复利的方法来计算日化无风险收益率
         periods: 考察周期(默认一年取252天)
     """

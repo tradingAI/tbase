@@ -129,7 +129,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] 模型在训练周期外(评估周期)的评估指标
   ```
   # lookback=10， 若测试从20200101开始, 则eval_start往前推10个交易日
-  python3 -m tbase.run --alg ddpg --eval --eval_start 20191218 --eval_end 20200223
+  python -m tbase.run --alg ddpg --eval --eval_start 20191218 --eval_end 20200223
   ```
 - [ ] 滑动窗口更新模型, 在评估周期内，每隔一个窗口T，重新训练一次模型，当T>评估周期时，等价于固定模型
 
@@ -174,8 +174,9 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [ ] 由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，更新到repo中, 以方便其他人复现, 包含以下信息
   - run.sh(运行脚本)
   - 参数设置
-  - performance: 5次平均 best portfolio
+  - performance: eval 指标, 训练起止日期，评估起止日期
   - 百度云盘链接
+  - Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
 
 线上交流方式
 
