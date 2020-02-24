@@ -9,7 +9,8 @@ from importlib import import_module
 import torch
 from torch.multiprocessing import set_start_method
 
-from tbase.common.cmd_util import common_arg_parser, make_env, set_global_seeds
+from tbase.common.cmd_util import (common_arg_parser, make_env, make_eval_env,
+                                   set_global_seeds)
 from tbase.common.logger import logger
 
 
@@ -44,10 +45,14 @@ def main():
     logger.info("Initializing agent by parameters:")
     logger.info(str(args))
     agent = get_agent(env, args)
-    logger.info("Training agent")
-    agent.learn()
-    logger.info("Train finished, see details by run tensorboard --logdir=%s" %
-                args.tensorboard_dir)
+    if not args.eval:
+        logger.info("Training agent")
+        agent.learn()
+        logger.info("Finished, check details by run tensorboard --logdir=%s" %
+                    args.tensorboard_dir)
+    # eval models
+    eval_env = make_eval_env(args=args)
+    agent.eval(eval_env, args)
 
 
 if __name__ == '__main__':

@@ -48,6 +48,32 @@ def make_env(args):
     return env
 
 
+def make_eval_env(args):
+    """
+    Create a wrapped, monitored gym.Env for Tgym.
+    """
+    ts_token = os.getenv("TUSHARE_TOKEN")
+    codes = args.codes.split(",")
+    indexs = args.indexs.split(",")
+    m = Market(
+            ts_token=ts_token,
+            start=args.eval_start,
+            end=args.eval_end,
+            codes=codes,
+            indexs=indexs,
+            data_dir=args.data_dir)
+    used_infos = ["equities_hfq_info", "indexs_info"]
+    env = _make_env(
+        scenario=args.scenario,
+        market=m,
+        investment=args.investment,
+        look_back_days=args.look_back_days,
+        used_infos=used_infos,
+        reward_fn=args.reward_fn,
+        log_deals=args.log_deals)
+    return env
+
+
 def common_arg_parser():
     """
     Create an argparse.ArgumentParser for run_mujoco.py.
@@ -67,6 +93,10 @@ def common_arg_parser():
                         help="when start the game")
     parser.add_argument("--end", type=str, default='20191231',
                         help="when end the game")
+    parser.add_argument("--eval_start", type=str, default='20200101',
+                        help="when start eval the agent")
+    parser.add_argument("--eval_end", type=str, default='20200223',
+                        help="when end eval the agent")
     parser.add_argument("--investment", type=float, default=100000,
                         help="the investment for each stock")
     parser.add_argument("--look_back_days", type=int, default=10,
@@ -118,7 +148,8 @@ def common_arg_parser():
     parser.add_argument('--print_action', default=False, action='store_true')
     parser.add_argument('--debug', default=False, action='store_true')
     parser.add_argument('--log_deals', default=False, action='store_true')
-    parser.add_argument('--run_id', type=int, default=1)
     # 运行参数
     parser.add_argument('--play', default=False, action='store_true')
+    parser.add_argument('--run_id', type=int, default=1)
+    parser.add_argument('--eval', default=False, action='store_true')
     return parser.parse_args()
