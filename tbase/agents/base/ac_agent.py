@@ -8,7 +8,7 @@ import torch
 import torch.multiprocessing as mp
 
 from tbase.agents.base.base_agent import BaseAgent
-from tbase.agents.base.explore import explore, simple_explore
+from tbase.agents.base.explore import env_eval, explore, simple_explore
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.optimizers import get_optimizer_func
@@ -58,7 +58,8 @@ class ACAgent(BaseAgent):
         )
 
     def load(self, dir):
-        if dir is None or not os.path.exist(dir):
+        print(dir)
+        if dir is None or not os.path.exists(dir):
             raise ValueError("dir is invalid")
         self.policy.load_state_dict(
             torch.load('{}/{}.{}.policy.pkl'.format(
@@ -144,3 +145,7 @@ class ACAgent(BaseAgent):
         else:
             self.simple_explore(self.args.warm_up, self.args.sample_size)
         logger.info("warm up: finished")
+
+    def eval(self, env, args):
+        self.load(self.model_dir)
+        env_eval(env, self.policy, args.print_action)

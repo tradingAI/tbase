@@ -50,3 +50,6 @@ class BaseAgent(nn.Module):
         if not os.path.exists(dir):
             os.makedirs(dir)
         return dir
+
+    def eval(self, *args):
+        raise NotImplementedError

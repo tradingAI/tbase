@@ -4,6 +4,7 @@ py_library(
     name = "py_default_lib",
     srcs = [
         "cmd_util.py",
+        "eval.py",
         "logger.py",
         "optimizers.py",
         "random_process.py",
@@ -21,6 +22,16 @@ py_test(
     name = "cmd_util_test",
     srcs = [
         "cmd_util_test.py",
+    ],
+    deps = [
+        ":py_default_lib",
+    ],
+)
+
+py_test(
+    name = "eval_test",
+    srcs = [
+        "eval_test.py",
     ],
     deps = [
         ":py_default_lib",
