@@ -63,10 +63,9 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
     - [x] DDPG
     - [x] TD3(Twin Delayed Deep Deterministic Policy Gradients)
-    - [ ] A2C
+    - [ ] A2C-ACKTR
     - [ ] PPO
     - [ ] PPO2
-    - [ ] ACKTR
     - [ ] GAIL
 
   - [ ] 多Agent

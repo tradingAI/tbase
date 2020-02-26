@@ -117,6 +117,10 @@ def common_arg_parser():
     parser.add_argument('--activation',
                         default="tanh",
                         help='activation function')
+    parser.add_argument('--entropy_coef', type=float, default=0.01,
+                        help='entropy term coefficient (default: 0.01)')
+    parser.add_argument('--value_loss_coef', type=float, default=0.5,
+                        help='value loss coefficient (default: 0.5)')
     # 训练参数
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
     parser.add_argument('--alg', help='rl algorithm', type=str, default='ddpg')

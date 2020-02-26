@@ -9,7 +9,7 @@ from tbase.common.eval import annualized_return, max_drawdown, sharpe_ratio
 from tbase.common.logger import logger
 
 
-# 多进程擦索env,将Transitions存入memory
+# 用于多进程擦索env,将Transitions存入memory
 def explore(pid, queue, env, state, memory, policy, size, print_actions):
     num_steps = 0
     rewards = []
