@@ -129,7 +129,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] 模型在训练周期外(评估周期)的评估指标
   ```
   # lookback=10， 若测试从20200101开始, 则eval_start往前推10个交易日
-  python3 -m tbase.run --alg ddpg --eval --eval_start 20191218 --eval_end 20200223
+  python -m tbase.run --alg ddpg --eval --eval_start 20191218 --eval_end 20200223 --seed 9
   ```
 - [ ] 滑动窗口更新模型, 在评估周期内，每隔一个窗口T，重新训练一次模型，当T>评估周期时，等价于固定模型
 
@@ -138,7 +138,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] 绝对收益率(Absolute Return)
 - [ ] 额外收益率(Excess Return)
 
-  - [ ] 相对于"买入持有"策略
+  - [x] 相对于"买入持有"策略
   - [ ] 相对于基线策略比如"上证300"
 
 - [x] 最大回撤: 在选定周期内任一历史时点往后推，净值走到最低点时的收益率回撤幅度的最大值

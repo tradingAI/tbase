@@ -8,7 +8,8 @@ import torch
 import torch.multiprocessing as mp
 
 from tbase.agents.base.base_agent import BaseAgent
-from tbase.agents.base.explore import env_eval, explore, simple_explore
+from tbase.agents.base.explore import (buy_and_hold, env_eval, explore,
+                                       simple_explore)
 from tbase.common.cmd_util import make_env
 from tbase.common.logger import logger
 from tbase.common.optimizers import get_optimizer_func
@@ -148,4 +149,14 @@ class ACAgent(BaseAgent):
 
     def eval(self, env, args):
         self.load(self.model_dir)
-        env_eval(env, self.policy, args.print_action)
+        _, _, annualized_return, portfolios = env_eval(env,
+                                                       self.policy,
+                                                       args.print_action)
+        bh_annualized_return, bh_portfolios = buy_and_hold(env)
+        for i in range(len(portfolios)):
+            self.writer.add_scalars('eval', {self.args.alg: portfolios[i],
+                                             "buy&hold": bh_portfolios[i]}, i)
+        excess_return = portfolios[-1] - bh_portfolios[-1]
+        logger.info("excess_return: %.3f" % excess_return)
+        annual_excess_return = annualized_return - bh_annualized_return
+        logger.info("annualized excess_return: %.3f" % annual_excess_return)
