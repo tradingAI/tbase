@@ -93,4 +93,36 @@ def env_eval(env, policy, print_actions):
     logger.info("max_drawdown: %.3f" % mdd)
     logger.info("sharpe_ratio: %.3f" % sharpe_r)
     logger.info("annualized_return: %.3f" % annualized_return_)
-    return mdd, sharpe_r, annualized_return_
+    return mdd, sharpe_r, annualized_return_, portfolios
+
+
+def buy_and_hold(env):
+    """
+    在回测第一个交易日均匀分仓买入，并持有到回策结束，用于基线策略
+    """
+    rewards = []
+    daily_returns = []
+    portfolios = [1.0]
+    env.reset()
+    action = env.get_buy_close_action(env.current_date)
+
+    n_days = 0
+    while True:
+        if n_days < 1:
+            _, reward, done, info, _ = env.step(action)
+        _, reward, done, info, _ = env.step(action, only_update=True)
+        n_days += 1
+        rewards.append(reward)
+        daily_returns.append(info["daily_pnl"] / env.investment)
+        portfolios.append(info["portfolio_value"])
+        if done:
+            break
+    mdd = max_drawdown(portfolios)
+    sharpe_r = sharpe_ratio(daily_returns)
+    annualized_return_ = annualized_return(portfolios[-1], n_days)
+    logger.info("=" * 34 + "buy_and_hold" + "=" * 34)
+    logger.info("portfolio: %.3f" % portfolios[-1])
+    logger.info("max_drawdown: %.3f" % mdd)
+    logger.info("sharpe_ratio: %.3f" % sharpe_r)
+    logger.info("annualized_return: %.3f" % annualized_return_)
+    return annualized_return_, portfolios
