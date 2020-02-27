@@ -154,8 +154,9 @@ class ACAgent(BaseAgent):
                                                        args.print_action)
         bh_annualized_return, bh_portfolios = buy_and_hold(env)
         for i in range(len(portfolios)):
-            self.writer.add_scalars('eval', {self.args.alg: portfolios[i],
-                                             "buy&hold": bh_portfolios[i]}, i)
+            self.writer.add_scalars('backtesting', {
+                self.args.alg: portfolios[i],
+                "buy&hold": bh_portfolios[i]}, i)
         excess_return = portfolios[-1] - bh_portfolios[-1]
         logger.info("excess_return: %.3f" % excess_return)
         annual_excess_return = annualized_return - bh_annualized_return
