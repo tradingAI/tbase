@@ -102,6 +102,8 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - print_action: "False", 随机打印action的值，方便查看action分布状况
 - reward_fn: "daily_return_with_chl_penalty", env reward function
 - run_id: "1", 运行序号, 方便查看相同参数多次运行结果差异
+- debug: "False", debug模式，打印具体的交易信息
+- eval: "False", 回测评估，为True时，不训练，只加载模型进行回测
 - [其他参数](tbase/common/cmd_util.py)
 
 
