@@ -21,7 +21,7 @@ class Agent(ACAgent):
         advantages = None
         value_loss = advantages.pow(2).mean()
         action_loss = -(advantages.detach() * action_log_probs).mean()
-        self.optimizer.zero_grad()
+
         if self.acktr and self.optimizer.steps % self.optimizer.Ts == 0:
             # Compute fisher, see Martens 2014
             self.actor_critic.zero_grad()
@@ -39,6 +39,7 @@ class Agent(ACAgent):
             fisher_loss.backward(retain_graph=True)
             self.optimizer.acc_stats = False
 
+        self.optimizer.zero_grad()
         (value_loss * self.value_loss_coef + action_loss -
          dist_entropy * self.entropy_coef).backward()
         self.optimizer.step()
