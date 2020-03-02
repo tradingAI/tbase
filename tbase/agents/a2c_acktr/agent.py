@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
 
+import random
 import time
 
+import numpy as np
 import torch
 
 from tbase.agents.base.ac_agent import ACAgent
@@ -13,12 +15,54 @@ class Agent(ACAgent):
     def __init__(self, env=None, args=None):
         super(Agent, self).__init__(env, args)
 
-    def update_params(self, _obs, _action, _rew, _obs_next, _done):
+    def explore(self, env, state, size, print_actions):
         t_start = time.time()
-        # TODO
-        values, action_log_probs, dist_entropy = None, None, None
-        # TODO
-        advantages = None
+        num_steps = 0
+        portfolios = []
+        states, actions, rewards, next_states, dones = [], [], [], [], []
+        while num_steps < size:
+            state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
+                torch.float)
+            with torch.no_grad():
+                action = self.policy.action(state_var, True)
+                action = action.astype(np.float)
+            if print_actions:
+                if random.random() < 0.001:
+                    print("tbase.agents.ddpg.agent action:" + str(action))
+            next_state, reward, done, info, _ = env.step(action)
+            states.append(state)
+            actions.append(action)
+            rewards.append(reward)
+            next_states.append(next_state)
+            dones.append(done)
+            rewards.append(reward)
+            num_steps += 1
+
+            if done:
+                state = env.reset()
+                portfolios.append(info["portfolio_value"])
+                break
+            state = next_state
+        e_t = time.time() - t_start
+        return states, actions, rewards, next_states, dones, portfolios, e_t
+
+    def update_params(self, states, actions, rewards, next_states, dones):
+        t_start = time.time()
+
+        action, action_log_probs, dist_entropy = self.policy.forward(states)
+        values = self.value.forward(states, action)
+        R = torch.zeros(1, 1)
+        if dones[-1] != 1:
+            R = values[-1]
+
+        value_loss = 0
+        advantages = []
+        for i in reversed(range(len(rewards))):
+            R = self.args.gamma * R + rewards[i]
+            advantage = R - values[i]
+            value_loss = value_loss + advantage.pow(2)
+            advantages.append(advantage)
+
         value_loss = advantages.pow(2).mean()
         action_loss = -(advantages.detach() * action_log_probs).mean()
 
@@ -56,13 +100,9 @@ class Agent(ACAgent):
         current_portfolio = 1.0
         t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
-            obs, act, rew, obs_t, done, avg_reward, e_t, ports = [None] * 8
-            if self.args.num_env == 1:
-                obs, act, rew, obs_t, done, avg_reward, e_t, ports = \
-                    self.simple_explore()
-            else:
-                obs, act, rew, obs_t, done, avg_reward, e_t, ports = \
-                    self.explore()
+            obs, act, rew, obs_t, done, ports, e_t = \
+                self.explore(self.args.t_max)
+
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
@@ -82,12 +122,9 @@ class Agent(ACAgent):
             self.writer.add_scalar('loss/value', v_loss, i_iter)
             self.writer.add_scalar('loss/policy', p_loss, i_iter)
             self.writer.add_scalar('dist_entropy/action', dist_entropy, i_iter)
-            self.writer.add_scalar('reward/policy',
-                                   torch.tensor(avg_reward), i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
                 msg = "total update time: %.1f secs" % (time.time() - t_start)
-                msg += ", iter=%d, avg_reward=%.3f" % (i_iter + 1, avg_reward)
                 msg += ", current_portfolio: %.3f" % current_portfolio
                 logger.info(msg)
             clear_memory()

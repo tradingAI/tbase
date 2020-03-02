@@ -7,7 +7,7 @@ from torch.distributions import Normal
 
 from tbase.common.random_process import OrnsteinUhlenbeckProcess
 from tbase.common.torch_utils import default_device, fc, get_activation, lstm
-from tbase.network.base import BasePolicy
+from tbase.network.base import BaseNet, BasePolicy
 
 
 class RandomPolicy(BasePolicy):
@@ -62,7 +62,6 @@ class LSTM_MLP(BasePolicy):
         output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
-        # action = self.action_high * torch.tanh(self.fc2(encoded))
         action = torch.tanh(self.fc2(encoded))
         if with_reg:
             return action, encoded
@@ -74,6 +73,52 @@ class LSTM_MLP(BasePolicy):
         action = action.detach().cpu()[0].numpy()
         action += self.random_process.sample()
         action = np.clip(action, self.action_low, self.action_high)
+        return action
+
+
+class LSTM_MLP_A2C(BaseNet):
+    def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
+                 output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
+                 fc_size=200, activation=None):
+        super(LSTM_MLP, self).__init__(device)
+        self.seq_len = seq_len
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.output_size = output_size
+        self.num_layers = num_layers
+        self.dropout = dropout
+        # learning rate
+        self.learning_rate = learning_rate
+        # 定义和初始化网络
+        self.rnn = lstm(input_size, hidden_size, num_layers, dropout)
+        self.fc1 = fc(hidden_size, fc_size)
+        self.fc2 = fc(fc_size, output_size)
+        self.fc3 = fc(fc_size, output_size)
+        self.activation = activation
+        self.dist = Normal
+
+    def init_hidden(self, batch_size):
+        h_0 = Variable(torch.randn(self.num_layers, batch_size,
+                       self.hidden_size)).to(self.device, torch.float)
+        c_0 = Variable(torch.randn(self.num_layers, batch_size,
+                       self.hidden_size)).to(self.device, torch.float)
+        return h_0, c_0
+
+    def forward(self, obs, explore=False):
+        # obs: seq_len, batch_size, input_size
+        h_0, c_0 = self.init_hidden(obs.shape[1])
+        output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
+        output = self.activation(output)
+        encoded = self.activation(self.fc1(output[-1, :, :]))
+        mu = torch.tanh(self.fc2(encoded))
+        sigma = torch.tanh(self.fc3(encoded))
+        dist = self.dist(mu, sigma)
+        action = dist.sample().detach().cpu()[0].numpy()
+        action = np.clip(action, self.action_low, self.action_high)
+        if not explore:
+            entropy = dist.entropy()
+            log_prob = dist.log_prob()
+            return action, entropy, log_prob
         return action
 
 
