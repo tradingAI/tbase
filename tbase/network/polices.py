@@ -80,7 +80,7 @@ class LSTM_MLP_A2C(BaseNet):
     def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
                  output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
                  fc_size=200, activation=None):
-        super(LSTM_MLP, self).__init__(device)
+        super(LSTM_MLP_A2C, self).__init__(device)
         self.seq_len = seq_len
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -104,22 +104,33 @@ class LSTM_MLP_A2C(BaseNet):
                        self.hidden_size)).to(self.device, torch.float)
         return h_0, c_0
 
-    def forward(self, obs, explore=False):
+    def forward(self, obs, explore=False, act=None):
         # obs: seq_len, batch_size, input_size
         h_0, c_0 = self.init_hidden(obs.shape[1])
         output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
         mu = torch.tanh(self.fc2(encoded))
-        sigma = torch.tanh(self.fc3(encoded))
+        sigma = torch.relu(self.fc3(encoded)) + 1e-5
         dist = self.dist(mu, sigma)
-        action = dist.sample().detach().cpu()[0].numpy()
-        action = np.clip(action, self.action_low, self.action_high)
-        if not explore:
-            entropy = dist.entropy()
-            log_prob = dist.log_prob()
-            return action, entropy, log_prob
-        return action
+        action = dist.sample()
+        action = torch.clamp(action, self.action_low, self.action_high)
+        action = action.detach().cpu()[0].numpy()
+        if explore:
+            return action
+
+        log_prob = dist.log_prob(act)
+        entropy = dist.entropy()
+        return action, entropy, log_prob
+
+    def action(self, obs):
+        # obs: seq_len, batch_size, input_size
+        h_0, c_0 = self.init_hidden(obs.shape[1])
+        output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
+        output = self.activation(output)
+        encoded = self.activation(self.fc1(output[-1, :, :]))
+        mu = torch.tanh(self.fc2(encoded))
+        return mu
 
 
 def get_policy_net(env, args):
@@ -139,5 +150,12 @@ def get_policy_net(env, args):
             ou_theta=0.15, ou_sigma=0.2, ou_mu=0).to(device)
     elif args.policy_net == "Random":
         return RandomPolicy(act_size)
+    elif args.policy_net == "LSTM_MLP_A2C":
+        return LSTM_MLP_A2C(
+            device=device, seq_len=seq_len,
+            input_size=input_size, hidden_size=300,
+            output_size=act_size, num_layers=1, dropout=0.0,
+            learning_rate=args.lr, fc_size=200,
+            activation=activation).to(device)
     else:
         raise ValueError("Not implement policy_net: %s" % args.value_net)

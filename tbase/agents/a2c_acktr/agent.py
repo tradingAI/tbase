@@ -5,6 +5,7 @@ import time
 
 import numpy as np
 import torch
+from torch import nn
 
 from tbase.agents.base.ac_agent import ACAgent
 from tbase.common.logger import logger
@@ -24,10 +25,10 @@ class Agent(ACAgent):
             state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
                 torch.float)
             with torch.no_grad():
-                action = self.policy.action(state_var, True)
+                action = self.policy.forward(state_var, True)
                 action = action.astype(np.float)
             if print_actions:
-                if random.random() < 0.001:
+                if random.random() < 0.01:
                     print("tbase.agents.ddpg.agent action:" + str(action))
             next_state, reward, done, info, _ = env.step(action)
             states.append(state)
@@ -35,7 +36,6 @@ class Agent(ACAgent):
             rewards.append(reward)
             next_states.append(next_state)
             dones.append(done)
-            rewards.append(reward)
             num_steps += 1
 
             if done:
@@ -44,65 +44,74 @@ class Agent(ACAgent):
                 break
             state = next_state
         e_t = time.time() - t_start
-        return states, actions, rewards, next_states, dones, portfolios, e_t
+        return np.array(states), np.array(actions), np.array(rewards), \
+            np.array(next_states), dones, portfolios, e_t
 
-    def update_params(self, states, actions, rewards, next_states, dones):
+    def update_params(self, _obs, _action, _rew, _obs_next, _done):
         t_start = time.time()
+        rewards = torch.tensor(_rew, device=self.policy.device,
+                               dtype=torch.float)
+        rewards = rewards.reshape(-1, 1)
 
-        action, action_log_probs, dist_entropy = self.policy.forward(states)
-        values = self.value.forward(states, action)
-        R = torch.zeros(1, 1)
-        if dones[-1] != 1:
-            R = values[-1]
+        actions = torch.from_numpy(_action).to(self.policy.device, torch.float)
+        actions = actions.reshape(actions.shape[0], -1)
+        states = torch.from_numpy(_obs).permute(1, 0, 2).to(
+            self.policy.device, torch.float)
 
+        action, action_log_probs, dist_entropy = self.policy.forward(
+            states, False, actions)
+        values = self.value.forward(states, actions)
+        returns = torch.zeros(len(rewards) + 1, 1)
+        if not _done[-1]:
+            returns[-1] = values[-1]
         value_loss = 0
-        advantages = []
+        print(rewards)
+        print(values[-1])
         for i in reversed(range(len(rewards))):
-            R = self.args.gamma * R + rewards[i]
-            advantage = R - values[i]
-            value_loss = value_loss + advantage.pow(2)
-            advantages.append(advantage)
-
+            returns[i] = self.args.gamma * returns[i + 1] + rewards[i]
+        advantages = returns[:-1] - values
+        print("advantages:", advantages)
         value_loss = advantages.pow(2).mean()
-        action_loss = -(advantages.detach() * action_log_probs).mean()
+        log_prob = -(advantages.detach() * action_log_probs).mean()
+        action_reg = torch.mean(torch.pow(actions, 2)) * 1e2
+        dist_entropy = dist_entropy.mean() * self.args.entropy_coef
+        # loss = (value_loss * self.args.value_loss_coef + action_loss -
+        #         dist_entropy * self.args.entropy_coef)
+        action_loss = log_prob - dist_entropy + action_reg
+        print(returns)
+        print(value_loss, action_loss, log_prob, action_reg, dist_entropy)
 
-        if self.acktr and self.optimizer.steps % self.optimizer.Ts == 0:
-            # Compute fisher, see Martens 2014
-            self.actor_critic.zero_grad()
-            pg_fisher_loss = - action_log_probs.mean()
+        # if self.acktr: TODO
+        self.value_opt.zero_grad()
+        value_loss.backward()
+        nn.utils.clip_grad_norm_(self.value.parameters(),
+                                 self.args.max_grad_norm)
+        self.value_opt.step()
 
-            value_noise = torch.randn(values.size())
-            if values.is_cuda:
-                value_noise = value_noise.cuda()
+        self.policy_opt.zero_grad()
+        action_loss.backward()
+        nn.utils.clip_grad_norm_(self.policy.parameters(),
+                                 self.args.max_grad_norm)
 
-            sample_values = values + value_noise
-            vf_fisher_loss = -(values - sample_values.detach()).pow(2).mean()
-
-            fisher_loss = pg_fisher_loss + vf_fisher_loss
-            self.optimizer.acc_stats = True
-            fisher_loss.backward(retain_graph=True)
-            self.optimizer.acc_stats = False
-
-        self.optimizer.zero_grad()
-        (value_loss * self.value_loss_coef + action_loss -
-         dist_entropy * self.entropy_coef).backward()
-        self.optimizer.step()
+        self.policy_opt.step()
 
         ut = time.time() - t_start
-        return value_loss.item(), action_loss.item(), dist_entropy.item(), ut
+        return value_loss, action_loss, dist_entropy, ut
 
     def learn(self):
-        if self.args.num_env > 1:
-            self.policy.share_memory()
-        self.warm_up()
         logger.info("learning started")
         i = 0
         current_portfolio = 1.0
         t_start = time.time()
+        state = self.envs[0].reset()
         for i_iter in range(self.args.max_iter_num):
             obs, act, rew, obs_t, done, ports, e_t = \
-                self.explore(self.args.t_max)
-
+                self.explore(
+                    self.envs[0],
+                    state,
+                    self.args.t_max,
+                    self.args.print_action)
+            state = obs[-1]
             for p in ports:
                 i += 1
                 self.writer.add_scalar('reward/portfolio', p, i)
@@ -113,15 +122,15 @@ class Agent(ACAgent):
                         i_iter + 1, self.best_portfolio))
                     self.save(self.model_dir)
             self.writer.add_scalar('time/explore', e_t, i_iter)
-            try:
-                v_loss, p_loss, dist_entropy, u_t = self.update_params(
-                    obs, act, rew, obs_t, done)
-            except Exception as error:
-                print(error)
+
+            v_loss, p_loss, dist_entropy, u_t = self.update_params(
+                obs, act, rew, obs_t, done)
+            self.writer.add_scalar('reward/policy', np.mean(rew), i_iter)
             self.writer.add_scalar('time/update', u_t, i_iter)
             self.writer.add_scalar('loss/value', v_loss, i_iter)
             self.writer.add_scalar('loss/policy', p_loss, i_iter)
-            self.writer.add_scalar('dist_entropy/action', dist_entropy, i_iter)
+            self.writer.add_scalar('dist_entropy/action',
+                                   dist_entropy, i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
                 msg = "total update time: %.1f secs" % (time.time() - t_start)
