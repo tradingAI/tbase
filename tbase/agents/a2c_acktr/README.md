@@ -4,7 +4,7 @@ A2C is a synchronous, deterministic variant of Asynchronous Advantage Actor Crit
     - [A3C](https://arxiv.org/pdf/1602.01783.pdf)
     - [Acktr:(ACKTR (pronounced “actor”) — Actor Critic using Kronecker-factored Trust Region)](https://arxiv.org/pdf/1708.05144.pdf)
 - Baselines post: TODO
-- `python3 -m tbase.run --alg=a2c_acktr --scenario=average --max_iter_num=500 --policy_net=LSTM_MLP_A2C --seed 9` runs the algorithm for about 122000 days = 500 episode on a tgym.average environment. See help (`-h`) for more options.
+- `python3 -m tbase.run --alg=a2c_acktr --max_iter_num=500 --policy_net=LSTM_MLP_A2C --seed 9` runs the algorithm for about 122000 days = 500 episode on a tgym.average environment. See help (`-h`) for more options.
 
 
 ## A3C
