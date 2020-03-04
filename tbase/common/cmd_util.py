@@ -117,8 +117,8 @@ def common_arg_parser():
     parser.add_argument('--activation',
                         default="tanh",
                         help='activation function')
-    parser.add_argument('--entropy_coef', type=float, default=0.001,
-                        help='entropy term coefficient (default: 0.01)')
+    parser.add_argument('--entropy_coef', type=float, default=0.1,
+                        help='entropy term coefficient (default: 0.1)')
     parser.add_argument('--value_loss_coef', type=float, default=0.5,
                         help='value loss coefficient (default: 0.5)')
     parser.add_argument("--t_max", type=int, default=10,
@@ -145,7 +145,7 @@ def common_arg_parser():
     # 输出相关
     parser.add_argument('--model_dir', help='dir to save trained model',
                         default="/tmp/tbase/models", type=str)
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+    parser.add_argument('--log_interval', type=int, default=10, metavar='N',
                         help='interval between training status(default:10)')
     parser.add_argument('--clear_memory_interval', type=int, default=5)
     parser.add_argument('--tensorboard_dir', default='/tmp/tbase/tensorboard',

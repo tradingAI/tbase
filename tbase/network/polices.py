@@ -96,6 +96,7 @@ class LSTM_MLP_A2C(BaseNet):
         self.fc3 = fc(fc_size, output_size)
         self.activation = activation
         self.dist = Normal
+        self.count = 1000
 
     def init_hidden(self, batch_size):
         h_0 = Variable(torch.randn(self.num_layers, batch_size,
@@ -111,17 +112,18 @@ class LSTM_MLP_A2C(BaseNet):
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
         mu = torch.tanh(self.fc2(encoded))
-        sigma = torch.relu(self.fc3(encoded)) + 1e-5
+        sigma = torch.nn.functional.softplus(self.fc3(encoded)) + \
+            max(1000. / self.count, 0.07)
+        self.count += 1
         dist = self.dist(mu, sigma)
         action = dist.sample()
         action = torch.clamp(action, self.action_low, self.action_high)
-        action = action.detach().cpu()[0].numpy()
         if explore:
             return action
 
         log_prob = dist.log_prob(act)
         entropy = dist.entropy()
-        return action, entropy, log_prob
+        return action, entropy, log_prob, sigma.mean()
 
     def action(self, obs):
         # obs: seq_len, batch_size, input_size
