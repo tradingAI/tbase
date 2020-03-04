@@ -63,10 +63,9 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
     - [x] DDPG
     - [x] TD3(Twin Delayed Deep Deterministic Policy Gradients)
-    - [ ] A2C
+    - [ ] A2C-ACKTR
     - [ ] PPO
     - [ ] PPO2
-    - [ ] ACKTR
     - [ ] GAIL
 
   - [ ] 多Agent
@@ -176,8 +175,9 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [ ] 由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，更新到repo中, 以方便其他人复现, 包含以下信息
   - run.sh(运行脚本)
   - 参数设置
-  - performance: 5次平均 best portfolio
+  - performance: eval 指标, 训练起止日期，评估起止日期
   - 百度云盘链接
+  - Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
 
 线上交流方式
 
