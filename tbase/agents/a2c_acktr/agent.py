@@ -49,34 +49,33 @@ class Agent(ACAgent):
 
     def update_params(self, _obs, _action, _rew, _obs_next, _done, iter):
         t_start = time.time()
+        # value
         rewards = torch.tensor(_rew, device=self.policy.device,
                                dtype=torch.float)
         rewards = rewards.reshape(-1, 1)
-
-        actions = torch.from_numpy(_action).to(self.policy.device, torch.float)
-        actions = actions.reshape(actions.shape[0], -1)
         states = torch.from_numpy(_obs).permute(1, 0, 2).to(
             self.policy.device, torch.float)
-
-        n_action, action_log_probs, dist_entropy, sigma = self.policy.forward(
-            states, False, actions)
-        self.writer.add_scalar('action/sigma', sigma, iter)
         values = self.value.forward(states)
-        returns = torch.zeros(len(rewards) + 1, 1)
+        # R_t: Return from time step t with discount factor gamma
+        R = torch.zeros(len(rewards) + 1, 1)
         if not _done[-1]:
-            returns[-1] = values[-1]
+            R[-1] = values[-1]
         value_loss = 0
-
         for i in reversed(range(len(rewards))):
-            returns[i] = self.args.gamma * returns[i + 1] + rewards[i]
-        advantages = returns[:-1] - values
-        # print("advantages:", advantages)
+            R[i] = self.args.gamma * R[i + 1] + rewards[i]
+        advantages = R[:-1] - values
         value_loss = advantages.pow(2).mean()
         self.value_opt.zero_grad()
         value_loss.backward()
         nn.utils.clip_grad_norm_(self.value.parameters(),
                                  self.args.max_grad_norm)
         self.value_opt.step()
+        # policy
+        actions = torch.from_numpy(_action).to(self.policy.device, torch.float)
+        actions = actions.reshape(actions.shape[0], -1)
+        n_action, action_log_probs, dist_entropy, sigma = self.policy.forward(
+            states, False, actions)
+        self.writer.add_scalar('action/sigma', sigma, iter)
 
         log_prob = (advantages.detach() * action_log_probs).mean()
         abs_log_prob = torch.abs(advantages.detach() * action_log_probs).mean()
@@ -85,8 +84,7 @@ class Agent(ACAgent):
         self.writer.add_scalar('action/reg', action_reg, iter)
         dist_entropy = dist_entropy.mean() * self.args.entropy_coef
 
-        n_values = self.value.forward(states)
-        action_loss = - n_values.mean() * 0.01 - log_prob - dist_entropy
+        action_loss = - log_prob - dist_entropy
 
         # if self.acktr: TODO
         self.policy_opt.zero_grad()
