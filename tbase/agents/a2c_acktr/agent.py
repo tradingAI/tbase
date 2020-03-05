@@ -9,18 +9,12 @@ from torch import nn
 
 from tbase.agents.base.ac_agent import ACAgent
 from tbase.common.logger import logger
-from tbase.common.optimizers import get_optimizer_func
 from tbase.common.torch_utils import clear_memory
 
 
 class Agent(ACAgent):
     def __init__(self, env=None, args=None):
         super(Agent, self).__init__(env, args)
-        # optimizer_fn = get_optimizer_func(args.opt_fn)()
-        # params = list(self.policy.parameters()) + list(self.value.parameters())
-        # self.opt = optimizer_fn(
-        #     params=filter(lambda p: p.requires_grad, params),
-        #     lr=args.lr)
 
     def explore(self, env, state, size, print_actions):
         t_start = time.time()
@@ -91,9 +85,8 @@ class Agent(ACAgent):
         self.writer.add_scalar('action/reg', action_reg, iter)
         dist_entropy = dist_entropy.mean() * self.args.entropy_coef
 
-        action_loss = action_reg - log_prob - dist_entropy
-        # value_loss = value_loss * self.args.value_loss_coef
-        # loss = value_loss + action_loss
+        n_values = self.value.forward(states)
+        action_loss = - n_values.mean() * 0.01 - log_prob - dist_entropy
 
         # if self.acktr: TODO
         self.policy_opt.zero_grad()
