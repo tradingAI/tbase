@@ -87,7 +87,7 @@ class Agent(ACAgent):
         log_prob = (advantages.detach() * action_log_probs).mean()
         abs_log_prob = torch.abs(advantages.detach() * action_log_probs).mean()
         self.writer.add_scalar('action/abs_log_prob', abs_log_prob, iter)
-        action_reg = torch.mean(torch.pow(n_action, 2)) * 0.1
+        action_reg = torch.mean(torch.pow(n_action, 2))
         self.writer.add_scalar('action/reg', action_reg, iter)
         dist_entropy = dist_entropy.mean() * self.args.entropy_coef
 
