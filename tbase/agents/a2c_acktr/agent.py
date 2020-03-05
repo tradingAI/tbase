@@ -16,6 +16,7 @@ class Agent(ACAgent):
     def __init__(self, env=None, args=None):
         super(Agent, self).__init__(env, args)
 
+    # TODO: add multi-process explore method
     def explore(self, env, state, size, print_actions):
         t_start = time.time()
         num_steps = 0
