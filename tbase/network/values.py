@@ -67,6 +67,7 @@ class LSTM_Merge_MLP(BaseNet):
         return v
 
 
+# TODO: refactor
 class LSTM_MLP_A2C(BaseNet):
     def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
                  num_layers=1, dropout=0.0, learning_rate=0.001,

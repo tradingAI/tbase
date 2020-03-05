@@ -75,7 +75,7 @@ class LSTM_MLP(BasePolicy):
         action = np.clip(action, self.action_low, self.action_high)
         return action
 
-
+# TODO: refactor
 class LSTM_MLP_A2C(BaseNet):
     def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
                  output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
