@@ -67,7 +67,7 @@ class Agent(ACAgent):
         n_action, action_log_probs, dist_entropy, sigma = self.policy.forward(
             states, False, actions)
         self.writer.add_scalar('action/sigma', sigma, iter)
-        values = self.value.forward(states, actions)
+        values = self.value.forward(states)
         returns = torch.zeros(len(rewards) + 1, 1)
         if not _done[-1]:
             returns[-1] = values[-1]

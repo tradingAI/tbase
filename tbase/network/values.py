@@ -93,7 +93,7 @@ class LSTM_MLP_A2C(BaseNet):
                        self.hidden_size)).to(self.device, torch.float)
         return h_0, c_0
 
-    def forward(self, obs, explore=False, act=None):
+    def forward(self, obs):
         # obs: seq_len, batch_size, input_size
         h_0, c_0 = self.init_hidden(obs.shape[1])
         output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
