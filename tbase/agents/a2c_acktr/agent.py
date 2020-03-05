@@ -16,11 +16,11 @@ from tbase.common.torch_utils import clear_memory
 class Agent(ACAgent):
     def __init__(self, env=None, args=None):
         super(Agent, self).__init__(env, args)
-        optimizer_fn = get_optimizer_func(args.opt_fn)()
-        params = list(self.policy.parameters()) + list(self.value.parameters())
-        self.opt = optimizer_fn(
-            params=filter(lambda p: p.requires_grad, params),
-            lr=args.lr)
+        # optimizer_fn = get_optimizer_func(args.opt_fn)()
+        # params = list(self.policy.parameters()) + list(self.value.parameters())
+        # self.opt = optimizer_fn(
+        #     params=filter(lambda p: p.requires_grad, params),
+        #     lr=args.lr)
 
     def explore(self, env, state, size, print_actions):
         t_start = time.time()
@@ -78,26 +78,37 @@ class Agent(ACAgent):
         advantages = returns[:-1] - values
         # print("advantages:", advantages)
         value_loss = advantages.pow(2).mean()
+        self.value_opt.zero_grad()
+        value_loss.backward()
+        nn.utils.clip_grad_norm_(self.value.parameters(),
+                                 self.args.max_grad_norm)
+        self.value_opt.step()
+
         log_prob = (advantages.detach() * action_log_probs).mean()
-        self.writer.add_scalar('action/log_prob', log_prob, iter)
-        action_reg = torch.mean(torch.pow(n_action, 2)) * 100
+        abs_log_prob = torch.abs(advantages.detach() * action_log_probs).mean()
+        self.writer.add_scalar('action/abs_log_prob', abs_log_prob, iter)
+        action_reg = torch.mean(torch.pow(n_action, 2)) * 0.1
         self.writer.add_scalar('action/reg', action_reg, iter)
         dist_entropy = dist_entropy.mean() * self.args.entropy_coef
 
         action_loss = action_reg - log_prob - dist_entropy
-        value_loss = value_loss * self.args.value_loss_coef
-        loss = value_loss + action_loss
+        # value_loss = value_loss * self.args.value_loss_coef
+        # loss = value_loss + action_loss
 
         # if self.acktr: TODO
-        self.opt.zero_grad()
-        loss.backward()
+        self.policy_opt.zero_grad()
+        action_loss.backward()
         nn.utils.clip_grad_norm_(self.policy.parameters(),
                                  self.args.max_grad_norm)
-        nn.utils.clip_grad_norm_(self.value.parameters(),
-                                 self.args.max_grad_norm)
-        self.opt.step()
+        self.policy_opt.step()
 
         ut = time.time() - t_start
+        self.writer.add_scalar('time/update', ut, iter)
+        self.writer.add_scalar('loss/value', value_loss, iter)
+        self.writer.add_scalar('loss/policy', action_loss, iter)
+        self.writer.add_scalar('action/dist_entropy',
+                               dist_entropy, iter)
+
         return value_loss, action_loss, dist_entropy, ut
 
     def learn(self):
@@ -124,15 +135,9 @@ class Agent(ACAgent):
                         i_iter + 1, self.best_portfolio))
                     self.save(self.model_dir)
             self.writer.add_scalar('time/explore', e_t, i_iter)
-
-            v_loss, p_loss, dist_entropy, u_t = self.update_params(
-                obs, act, rew, obs_t, done, i_iter)
             self.writer.add_scalar('reward/policy', np.mean(rew), i_iter)
-            self.writer.add_scalar('time/update', u_t, i_iter)
-            self.writer.add_scalar('loss/value', v_loss, i_iter)
-            self.writer.add_scalar('loss/policy', p_loss, i_iter)
-            self.writer.add_scalar('action/dist_entropy',
-                                   dist_entropy, i_iter)
+
+            self.update_params(obs, act, rew, obs_t, done, i_iter)
 
             if (i_iter + 1) % self.args.log_interval == 0:
                 msg = "total update time: %.1f secs" % (time.time() - t_start)

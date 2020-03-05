@@ -67,6 +67,42 @@ class LSTM_Merge_MLP(BaseNet):
         return v
 
 
+class LSTM_MLP_A2C(BaseNet):
+    def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
+                 num_layers=1, dropout=0.0, learning_rate=0.001,
+                 fc_size=200, output_size=1, activation=None):
+        super(LSTM_MLP_A2C, self).__init__(device)
+        self.seq_len = seq_len
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.output_size = output_size
+        self.num_layers = num_layers
+        self.dropout = dropout
+        # learning rate
+        self.learning_rate = learning_rate
+        # 定义和初始化网络
+        self.rnn = lstm(input_size, hidden_size, num_layers, dropout)
+        self.fc1 = fc(hidden_size, fc_size)
+        self.fc2 = fc(fc_size, output_size)
+        self.activation = activation
+
+    def init_hidden(self, batch_size):
+        h_0 = Variable(torch.randn(self.num_layers, batch_size,
+                       self.hidden_size)).to(self.device, torch.float)
+        c_0 = Variable(torch.randn(self.num_layers, batch_size,
+                       self.hidden_size)).to(self.device, torch.float)
+        return h_0, c_0
+
+    def forward(self, obs, explore=False, act=None):
+        # obs: seq_len, batch_size, input_size
+        h_0, c_0 = self.init_hidden(obs.shape[1])
+        output, _ = self.rnn(obs.to(self.device), (h_0, c_0))
+        output = self.activation(output)
+        output = self.activation(self.fc1(output[-1, :, :]))
+        v = self.fc2(output)
+        return v
+
+
 def get_single_value_net(env, args):
     seq_len = args.look_back_days
     input_size = env.input_size
@@ -82,6 +118,13 @@ def get_single_value_net(env, args):
             num_layers=1, dropout=0.0, learning_rate=args.lr,
             act_input_size=act_size,
             act_fc1_size=200, act_fc2_size=100, output_size=1,
+            activation=activation).to(device)
+    if args.value_net == "LSTM_MLP_A2C":
+        return LSTM_MLP_A2C(
+            device=device,
+            seq_len=seq_len, input_size=input_size, hidden_size=300,
+            num_layers=1, dropout=0.0, learning_rate=args.lr,
+            fc_size=200, output_size=1,
             activation=activation).to(device)
     else:
         raise ValueError("Not implement value_net: %s" % args.value_net)

@@ -113,7 +113,7 @@ class LSTM_MLP_A2C(BaseNet):
         encoded = self.activation(self.fc1(output[-1, :, :]))
         mu = torch.tanh(self.fc2(encoded))
         sigma = torch.nn.functional.softplus(self.fc3(encoded)) + \
-            max(1000. / self.count, 0.07)
+            max(1000. / self.count, 0.1)
         self.count += 1
         dist = self.dist(mu, sigma)
         action = dist.sample()
