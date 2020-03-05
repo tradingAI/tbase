@@ -76,6 +76,7 @@ class LSTM_MLP(BasePolicy):
         return action
 
 
+# TODO: refactor
 class LSTM_MLP_A2C(BaseNet):
     def __init__(self, device=None, seq_len=11, input_size=10, hidden_size=300,
                  output_size=4, num_layers=1, dropout=0.0, learning_rate=0.001,
@@ -112,8 +113,9 @@ class LSTM_MLP_A2C(BaseNet):
         output = self.activation(output)
         encoded = self.activation(self.fc1(output[-1, :, :]))
         mu = torch.tanh(self.fc2(encoded))
-        sigma = torch.nn.functional.softplus(self.fc3(encoded)) + \
-            max(1000. / self.count, 0.07)
+        # Note: sigma = sigma + max(1000. / self.count, 0.1) is better
+        sigma = torch.nn.functional.softplus(self.fc3(encoded))
+
         self.count += 1
         dist = self.dist(mu, sigma)
         action = dist.sample()
