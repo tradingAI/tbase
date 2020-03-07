@@ -76,7 +76,7 @@ def make_eval_env(args):
 
 def common_arg_parser():
     """
-    Create an argparse.ArgumentParser for run_mujoco.py.
+    Create an argparse.ArgumentParser for trading agents.
     """
     import argparse
     parser = argparse.ArgumentParser("reinforcement learning trading agents")
