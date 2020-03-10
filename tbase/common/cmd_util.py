@@ -26,6 +26,7 @@ def make_env(args):
     Create a wrapped, monitored gym.Env for Tgym.
     """
     ts_token = os.getenv("TUSHARE_TOKEN")
+    print(2333, ts_token)
     codes = args.codes.split(",")
     indexs = args.indexs.split(",")
 
@@ -144,11 +145,12 @@ def common_arg_parser():
                         help='maximal number of main iterations')
     # 输出相关
     parser.add_argument('--model_dir', help='dir to save trained model',
-                        default="/tmp/tbase/models", type=str)
+                        default=os.path.join("tmp","tbase","models"), type=str)
+    
     parser.add_argument('--log_interval', type=int, default=10, metavar='N',
                         help='interval between training status(default:10)')
     parser.add_argument('--clear_memory_interval', type=int, default=5)
-    parser.add_argument('--tensorboard_dir', default='/tmp/tbase/tensorboard',
+    parser.add_argument('--tensorboard_dir', default=os.path.join("tmp","tbase","tensorboard"),
                         type=str,
                         help='Directory to save learning curve data.')
     parser.add_argument('--print_action', default=False, action='store_true')
