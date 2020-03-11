@@ -37,7 +37,8 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
 - 3. Build your docker image: `bash build-docker-image.sh`, 也可以直接从docker hub上pull
 - 4. 手动运行
-  - `docker run -it -v 本项目绝对目录:/root/trade/tbase aiminders/trade:tbase bash`
+  - CPU版本 `docker run -it -v 本项目绝对目录:/root/trade/tbase aiminders/trade:tbase bash`
+  - GPU版本 `docker run --runtime=nvidia -it -v 本项目绝对目录:/root/trade/tbase mickeyzhoudocker/trade:tbase bash`
   - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
 
 
