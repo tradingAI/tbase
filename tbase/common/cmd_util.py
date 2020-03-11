@@ -26,7 +26,6 @@ def make_env(args):
     Create a wrapped, monitored gym.Env for Tgym.
     """
     ts_token = os.getenv("TUSHARE_TOKEN")
-    print(2333, ts_token)
     codes = args.codes.split(",")
     indexs = args.indexs.split(",")
 
