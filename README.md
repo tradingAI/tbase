@@ -50,6 +50,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [x] 多进程单GPU并行
   - [ ] 多进程多GPU并行
   - [ ] 混合精度训练(Apex)
+  - [ ] 分布式多机多卡并行(基于[Horovod](https://github.com/horovod/horovod))
 
 - [x] 通过运行参数选择:
 
@@ -175,12 +176,15 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] Travis CI
 - [ ] 全面的unittest
 - [ ] Blog Post && baseline模型共享(百度网盘)
-- [ ] 由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，更新到repo中, 以方便其他人复现, 包含以下信息
-  - run.sh(运行脚本)
-  - 参数设置
+- [ ] 分享模型，提供web上传方式，模型榜单排名: [tweb](https://github.com/SnakeHacker/tweb)
+  - commit id
+  - 训练的运行参数
+  - 评估的运行参数
   - performance: eval 指标, 训练起止日期，评估起止日期
-  - 百度云盘链接
-  - Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
+  - 模型的百度云盘链接
+- [ ] Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
+
+**由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，将实验结果分享出来**
 
 线上交流方式
 
