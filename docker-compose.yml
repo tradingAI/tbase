@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   bazel:
-    image: aiminders/trade:tbase
+    image: registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:latest
     environment:
       TUSHARE_TOKEN: ${TUSHARE_TOKEN}
     command:
