@@ -37,7 +37,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
 - 3. Build your docker image: `bash build-docker-image.sh`, 也可以直接从docker hub上pull
 - 4. 手动运行
-  - CPU版本 `docker run -it -v 本项目绝对目录:/root/trade/tbase aiminders/trade:tbase bash`
+  - CPU版本 `docker run -it -v 本项目绝对目录:/root/trade/tbase registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:latest bash`
   - GPU版本 `docker run --runtime=nvidia -it -v 本项目绝对目录:/root/trade/tbase mickeyzhoudocker/trade:tbase bash`
   - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
 
@@ -176,11 +176,12 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] Travis CI
 - [ ] 全面的unittest
 - [ ] Blog Post && baseline模型共享(百度网盘)
-- [ ] 分享模型，提供web上传方式，模型榜单排名: [tweb](https://github.com/SnakeHacker/tweb)
+- [ ] 模型分享，评估，部署: [tweb](https://github.com/SnakeHacker/tweb)
+  - 提供web上传方式，模型榜单排名
   - commit id
   - 训练的运行参数
-  - 评估的运行参数
-  - performance: eval 指标, 训练起止日期，评估起止日期
+  - 评估的运行参数: codes, start, end
+  - performance: 参考评估指标(去除绝对收益率)
   - 模型的百度云盘链接
 - [ ] Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
 
