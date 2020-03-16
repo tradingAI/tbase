@@ -49,7 +49,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
     docker run --runtime=nvidia -it \
         -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
         -v 本项目绝对目录:/root/trade/tbase \
-        registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:latest-gpu bash
+        registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:gpu-latest bash
     ```
   - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
 
