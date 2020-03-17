@@ -13,8 +13,8 @@ py_library(
         "torch_utils.py",
     ],
     deps = [
-        "@com_github_iminders_tgym//tgym:py_default_lib",
-        "@com_github_iminders_tgym//tgym/envs:py_default_lib",
+        "@com_github_iminders_tenvs//tenvs:py_default_lib",
+        "@com_github_iminders_tenvs//tenvs/envs:py_default_lib",
     ],
 )
 

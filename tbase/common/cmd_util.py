@@ -6,8 +6,8 @@ import random
 import numpy as np
 import torch
 
-from tgym.market import Market
-from tgym.scenario import make_env as _make_env
+from tenvs.market import Market
+from tenvs.scenario import make_env as _make_env
 
 
 def set_global_seeds(seed):
@@ -23,7 +23,7 @@ def set_global_seeds(seed):
 
 def make_env(args):
     """
-    Create a wrapped, monitored gym.Env for Tgym.
+    Create a wrapped, monitored gym.Env for tenvs.
     """
     ts_token = os.getenv("TUSHARE_TOKEN")
     codes = args.codes.split(",")
@@ -50,7 +50,7 @@ def make_env(args):
 
 def make_eval_env(args):
     """
-    Create a wrapped, monitored gym.Env for Tgym.
+    Create a wrapped, monitored gym.Env for tenvs.
     """
     ts_token = os.getenv("TUSHARE_TOKEN")
     codes = args.codes.split(",")
@@ -101,8 +101,8 @@ def common_arg_parser():
                         help="the investment for each stock")
     parser.add_argument("--look_back_days", type=int, default=10,
                         help="how many days shoud look back")
-    parser.add_argument("--data_dir", type=str, default='/tmp/tgym',
-                        help="directory for tgym store trade data")
+    parser.add_argument("--data_dir", type=str, default='/tmp/tenvs',
+                        help="directory for tenvs store trade data")
     parser.add_argument('--num_env', default=1, type=int,
                         help='Number of environment copies run in parallel.')
     parser.add_argument('--device', type=str, default=None)

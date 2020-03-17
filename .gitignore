@@ -9,3 +9,6 @@
 *outputs/
 .ropeproject/
 bazel-*
+tests/
+dist/
+build/

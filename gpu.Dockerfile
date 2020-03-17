@@ -37,13 +37,13 @@ RUN apt-get -y update --fix-missing && \
 # ENV BUILD_TIMD=${BUILD_TIMD}
 
 ENV CODE_DIR /root/trade
-# install tgym
+# install tenvs
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
-RUN rm -rf tgym
-RUN git clone https://github.com/iminders/tgym.git
+RUN rm -rf tenvs
+RUN git clone https://github.com/iminders/tenvs.git
 # Clean up pycache and pyc files
-RUN cd $CODE_DIR/tgym && rm -rf __pycache__ && \
+RUN cd $CODE_DIR/tenvs && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
     pip install -r requirements.txt && \
     pip install -e .

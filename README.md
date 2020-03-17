@@ -15,10 +15,10 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 **1\. Mac OSX/Ubuntu**
 
 - 依赖: `python3, pip`, 如果没有安装可参考[Ubuntu 18.04 Dockerfile](Dockerfile)
-- [tgym](https://github.com/iminders/tgym)
+- [tenvs](https://github.com/iminders/tenvs)
   ```
-  git clone https://github.com/iminders/tgym
-  cd tgym
+  git clone https://github.com/iminders/tenvs
+  cd tenvs
   pip install -r requirements.txt
   pip install -e .
   ```
@@ -41,14 +41,14 @@ export TUSHARE_TOKEN=YOUR_TOKEN
     ```
     docker run -it \
         -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
-        -v 本项目绝对目录:/root/trade/tbase \
+        -v $PWD:/root/trade/tbase \
         registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:latest bash
     ```
   - GPU版本
     ```
     docker run --runtime=nvidia -it \
         -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
-        -v 本项目绝对目录:/root/trade/tbase \
+        -v $PWD:/root/trade/tbase \
         registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:gpu-latest bash
     ```
   - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
