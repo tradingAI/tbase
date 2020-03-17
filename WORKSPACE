@@ -15,7 +15,7 @@ rules_python_deps()
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
-    name = "com_github_iminders_tgym",
+    name = "com_github_iminders_tenvs",
     commit = "2967aabc31077304671816a7868688ff9e13256c",
-    remote = "https://github.com/iminders/tgym.git",
+    remote = "https://github.com/iminders/tenvs.git",
 )
