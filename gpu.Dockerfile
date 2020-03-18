@@ -28,7 +28,6 @@ RUN apt-get -y update --fix-missing && \
         tree \
         vim \
         software-properties-common && \
-    mv /usr/bin/lsb_release /usr/bin/lsb_release.bak && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
