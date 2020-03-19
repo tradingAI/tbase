@@ -1,4 +1,4 @@
-# https://github.com/iminders/bazel/blob/master/gpu.Dockerfile
+# https://github.com/iminders/bazel/blob/master/bazel.gpu.Dockerfile
 FROM registry.cn-hangzhou.aliyuncs.com/aiminders/bazel:gpu-latest
 
 RUN apt-get -y update --fix-missing && \
@@ -40,7 +40,7 @@ ENV CODE_DIR /root/trade
 WORKDIR  $CODE_DIR
 RUN cd $CODE_DIR
 RUN rm -rf tenvs
-RUN git clone https://github.com/iminders/tenvs.git
+RUN git clone https://github.com/tradingAI/tenvs.git
 # Clean up pycache and pyc files
 RUN cd $CODE_DIR/tenvs && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \

@@ -1,4 +1,4 @@
-workspace(name = "com_github_iminders_tbase")
+workspace(name = "com_github_tradingai_tbase")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -17,5 +17,5 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "com_github_iminders_tenvs",
     commit = "6b014ca70ce00662ff4b9177a1a5cf4ef09b4533",
-    remote = "https://github.com/iminders/tenvs.git",
+    remote = "https://github.com/tradingAI/tenvs.git",
 )

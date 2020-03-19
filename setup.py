@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setup(name='tbase',
       version='0.1.0',
       description='基于强化学习的交易算法Baselines',
-      url='https://github.com/iminders/tbase',
+      url='https://github.com/tradingAI/tbase',
       author='liuwen',
       author_email='liuwen.w@qq.com',
       long_description=long_description,
