@@ -188,7 +188,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] Travis CI
 - [ ] 全面的unittest
 - [ ] Blog Post && baseline模型共享(百度网盘)
-- [ ] 模型分享，评估，部署: [tweb](https://github.com/SnakeHacker/tweb)
+- [ ] 模型分享，评估，部署: [tweb](http://tweb.aiminders.com/)[guest:guest], [tweb repo](https://github.com/SnakeHacker/tweb)
   - 提供web上传方式，模型榜单排名
   - commit id
   - 训练的运行参数
