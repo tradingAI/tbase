@@ -15,9 +15,9 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 **1\. Mac OSX/Ubuntu**
 
 - 依赖: `python3, pip`, 如果没有安装可参考[Ubuntu 18.04 Dockerfile](Dockerfile)
-- [tenvs](https://github.com/iminders/tenvs)
+- [tenvs](https://github.com/tradingAI/tenvs)
   ```
-  git clone https://github.com/iminders/tenvs
+  git clone https://github.com/tradingAI/tenvs
   cd tenvs
   pip install -r requirements.txt
   pip install -e .
@@ -25,7 +25,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - tbase
 
   ```
-  git clone https://github.com/iminders/tbase
+  git clone https://github.com/tradingAI/tbase
   cd tbase
   pip install -r requirements.txt
   pip install -e .
@@ -173,7 +173,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - Send pull request
 
 # 如何增加agent
-1. Fork  https://github.com/iminders/tbase
+1. Fork  https://github.com/tradingAI/tbase
 2. 在tbase.agents下添加目录, 例如: ddpg
 3. 新建agent.py, 在类名为Agent的类中实现你的agent(继承tbase.common.base_agent.BaseAgent)
 4. **添加单元测试**
@@ -188,7 +188,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [x] Travis CI
 - [ ] 全面的unittest
 - [ ] Blog Post && baseline模型共享(百度网盘)
-- [ ] 模型分享，评估，部署: [tweb](http://tweb.aiminders.com/)[guest:guest], [tweb repo](https://github.com/SnakeHacker/tweb)
+- [ ] 模型分享，评估，部署: [tweb](http://tweb.aiminders.com/)[guest:guest], [tweb repo](https://github.com/tradingAI/tweb)
   - 提供web上传方式，模型榜单排名
   - commit id
   - 训练的运行参数
