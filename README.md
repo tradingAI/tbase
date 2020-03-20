@@ -26,21 +26,24 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 - 1. [docker install](https://docs.docker.com/install/)
 - 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
-- 3. Build your docker image: `bash build-docker-image.sh`, 也可以直接从[docker hub](https://hub.docker.com/repository/docker/tradingai/tbase)上pull
-- 4. 手动运行
+- 3. 构建image的方式
+  - Build your docker image: `bash build-docker-image.sh`,
+  - [docker hub](https://hub.docker.com/repository/docker/tradingai/tbase): `docker pull tradingai/tbase:latest`
+  - [阿里云镜像](https://cr.console.aliyun.com/repository/cn-hangzhou/tradingai/tbase/images): `docker pull registry.cn-hangzhou.aliyuncs.com/tradingai/tbase:latest`
+- 4. 手动运行(Note: 如果使用阿里云镜像，需要更改镜像名称)
   - CPU版本
     ```
     docker run -it \
         -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
         -v $PWD:/root/trade/tbase \
-        registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:latest bash
+        tradingai/tbase:latest bash
     ```
   - GPU版本
     ```
     docker run --runtime=nvidia -it \
         -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
         -v $PWD:/root/trade/tbase \
-        registry.cn-hangzhou.aliyuncs.com/aiminders/tbase:gpu-latest bash
+        tradingai/tbase:gpu-latest bash
     ```
   - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
 
