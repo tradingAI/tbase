@@ -1,5 +1,5 @@
-# https://github.com/iminders/bazel/blob/master/bazel.gpu.Dockerfile
-FROM registry.cn-hangzhou.aliyuncs.com/aiminders/bazel:gpu-latest
+# https://github.com/tradingAI/docker/blob/master/bazel.gpu.Dockerfile
+FROM tradingai/bazel:gpu-latest
 
 RUN apt-get -y update --fix-missing && \
     apt-get -y upgrade --fix-missing && \

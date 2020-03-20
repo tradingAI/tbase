@@ -1,5 +1,5 @@
-# https://github.com/iminders/docker/blob/master/bazel.Dockerfile
-FROM registry.cn-hangzhou.aliyuncs.com/aiminders/bazel:latest
+# https://github.com/tradingAI/docker/blob/master/bazel.Dockerfile
+FROM tradingai/bazel:latest
 
 RUN apt-get -y update --fix-missing && \
     apt-get -y upgrade --fix-missing && \
