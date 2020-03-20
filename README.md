@@ -115,11 +115,11 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 **Defalut policy net setting(actor)**
 
-![actor](https://github.com/tradingAI/tbase/tree/master/tbase/agents/ddpg/images/policy.png)
+![actor](tbase/agents/ddpg/images/policy.png)
 
 **Defalut value net setting(critic)**
 
-![critic](https://github.com/tradingAI/tbase/tree/master/tbase/agents/ddpg/images/value.png)
+![critic](tbase/agents/ddpg/images/value.png)
 
 运行tensorboard
 
@@ -127,7 +127,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward ,portfolio, time等指标
 
-![loss](https://github.com/tradingAI/tbase/tree/master/images/default_param.png)
+![loss](images/default_param.png)
 
 # 加载模型
 
