@@ -6,7 +6,7 @@
 
 # 安装
 
-设置 tushare token[(token注册链接:https://tushare.pro/register?reg=124861)](https://tushare.pro/register?reg=124861):
+设置 tushare token[(Tushare token注册申请)](https://tushare.pro/register?reg=124861):
 
 ```
 export TUSHARE_TOKEN=YOUR_TOKEN
