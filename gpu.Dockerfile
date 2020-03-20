@@ -32,25 +32,17 @@ RUN apt-get -y update --fix-missing && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
 
-# ARG BUILD_TIMD
-# ENV BUILD_TIMD=${BUILD_TIMD}
-
-ENV CODE_DIR /root/trade
 # install tenvs
-WORKDIR  $CODE_DIR
-RUN cd $CODE_DIR
-RUN rm -rf tenvs
-RUN git clone https://github.com/tradingAI/tenvs.git
-# Clean up pycache and pyc files
-RUN cd $CODE_DIR/tenvs && rm -rf __pycache__ && \
-    find . -name "*.pyc" -delete && \
-    pip install -r requirements.txt && \
-    pip install -e .
-
+RUN pip install tenvs>=1.0.1
 RUN pip install torch==1.4
 RUN pip install tensorflow==2.0.1
 RUN pip install tensorboard==2.0.0
 
+# ARG BUILD_TIMD
+# ENV BUILD_TIMD=${BUILD_TIMD}
+
+ENV CODE_DIR /root/trade
+WORKDIR  $CODE_DIR
 COPY . $CODE_DIR/tbase
 RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
