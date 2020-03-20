@@ -26,7 +26,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 - 1. [docker install](https://docs.docker.com/install/)
 - 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
-- 3. Build your docker image: `bash build-docker-image.sh`, 也可以直接从docker hub上pull
+- 3. Build your docker image: `bash build-docker-image.sh`, 也可以直接从[docker hub](https://hub.docker.com/repository/docker/tradingai/tbase)上pull
 - 4. 手动运行
   - CPU版本
     ```
