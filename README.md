@@ -13,17 +13,8 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
 **1\. Mac OSX/Ubuntu**
-
-- 依赖: `python3, pip`, 如果没有安装可参考[Ubuntu 18.04 Dockerfile](Dockerfile)
-- [tenvs](https://github.com/tradingAI/tenvs)
-  ```
-  git clone https://github.com/tradingAI/tenvs
-  cd tenvs
-  pip install -r requirements.txt
-  pip install -e .
-  ```
-- tbase
-
+- **安装方式一(直接使用tbase中的算法):** `pip install tbase>=0.1.2`
+- **安装方式二(如果需要更改源码运行)**
   ```
   git clone https://github.com/tradingAI/tbase
   cd tbase

@@ -15,7 +15,7 @@ def read_install_requires():
 
 
 setup(name='tbase',
-      version='0.1.1',
+      version='0.1.2',
       description='基于强化学习的交易算法Baselines',
       url='https://github.com/tradingAI/tbase',
       author='liuwen',

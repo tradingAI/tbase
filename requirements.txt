@@ -5,6 +5,7 @@ gym
 requests
 beautifulsoup4
 lxml
+tenvs>=1.0.1
 torch>=1.4
 tensorflow==2.0.1
 tensorboard==2.0.0
