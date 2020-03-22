@@ -1,6 +1,7 @@
 ## Quick start
 
 ### Dependency
+- Mac OS/Linux
 - python 3.5-3.7
 - pip
 
