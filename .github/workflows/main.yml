@@ -25,6 +25,6 @@ jobs:
     - name: unit-test
       run: |
         echo `whoami`
-        mkdir -p ～/BAZEL_USER_ROOT
+        export TUSHARE_TOKEN=${{ secrets.TUSHARE_TOKEN }}
         docker-compose up
         echo test
