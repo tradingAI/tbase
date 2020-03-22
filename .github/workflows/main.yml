@@ -6,7 +6,9 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - dev
   pull_request:
     branches: [ master ]
 
@@ -24,13 +26,9 @@ jobs:
 
     - name: unit-test
       run: |
-        echo `whoami`
         mkdir -p /home/runner/BAZEL_USER_ROOT
         export BAZEL_USER_ROOT=/home/runner/BAZEL_USER_ROOT
         mkdir -p /home/runner/OUTPUT_DIR
         export OUTPUT_DIR=/home/runner/OUTPUT_DIR
-        echo `ll $BAZEL_USER_ROOT`
-        echo `ll $OUTPUT_DIR`
         export TUSHARE_TOKEN=${{ secrets.TUSHARE_TOKEN }}
         docker-compose up
-        echo test

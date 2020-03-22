@@ -1,5 +1,4 @@
-# tbase
-![CI](https://github.com/tradingAI/tbase/workflows/CI/badge.svg?branch=master)  
+# tbase ![CI](https://github.com/tradingAI/tbase/workflows/CI/badge.svg?branch=master)  
 
 基于强化学习的交易算法Baselines(Pytorch实现). 旨在提供一个在中国股市上可复现的算法Baselines.
 
