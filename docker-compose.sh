@@ -3,6 +3,8 @@ cd "$(dirname "$0")"
 
 export BAZEL_RUNID=$RANDOM
 
+chown $USER:$USER /root/cache/bazel
+
 echo `ls -l /root/cache/bazel`
 
 bazel --batch \
