@@ -28,6 +28,6 @@ jobs:
         export BAZEL_USER_ROOT=～/BAZEL_USER_ROOT
         mkdir -p ～/OUTPUT_DIR
         export OUTPUT_DIR=～/OUTPUT_DIR
-        export TUSHARE_TOKEN=${{TUSHARE_TOKEN}}
+        export TUSHARE_TOKEN=${{ TUSHARE_TOKEN }}
         docker-compose up
         echo test
