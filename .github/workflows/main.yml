@@ -24,5 +24,9 @@ jobs:
 
     - name: unit-test
       run: |
+        mkdir -p /home/root/BAZEL_USER_ROOT
+        export BAZEL_USER_ROOT=/home/root/BAZEL_USER_ROOT
+        mkdir -p /home/root/OUTPUT_DIR
+        export OUTPUT_DIR=/home/root/OUTPUT_DIR
         docker-compose up
         echo test
