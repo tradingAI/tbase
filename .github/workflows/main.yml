@@ -24,7 +24,7 @@ jobs:
 
     - name: unit-test
       run: |
-        echo ${{ secrets.TUSHARE_TOKEN }}
+        echo whoami
         mkdir -p ～/BAZEL_USER_ROOT
         export BAZEL_USER_ROOT=～/BAZEL_USER_ROOT
         mkdir -p ～/OUTPUT_DIR
