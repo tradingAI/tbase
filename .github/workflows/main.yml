@@ -31,4 +31,4 @@ jobs:
         mkdir -p /home/runner/OUTPUT_DIR
         export OUTPUT_DIR=/home/runner/OUTPUT_DIR
         export TUSHARE_TOKEN=${{ secrets.TUSHARE_TOKEN }}
-        docker-compose up
+        docker-compose up --exit-code-from bazel
