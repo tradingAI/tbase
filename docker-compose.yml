@@ -9,5 +9,5 @@ services:
       bash /root/tbase/docker-compose.sh
     volumes:
       - .:/root/tbase
-      # - ${BAZEL_USER_ROOT}:/root/cache/bazel
-      # - ${OUTPUT_DIR}:/root/output
+      - ${BAZEL_USER_ROOT}:/root/cache/bazel
+      - ${OUTPUT_DIR}:/root/output
