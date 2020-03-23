@@ -26,7 +26,6 @@ jobs:
 
     - name: unit-test
       run: |
-        bash build-docker-image.sh
         export TUSHARE_TOKEN=${{ secrets.TUSHARE_TOKEN }}
         mkdir -p /home/runner/BAZEL_USER_ROOT
         export BAZEL_USER_ROOT=/home/runner/BAZEL_USER_ROOT
