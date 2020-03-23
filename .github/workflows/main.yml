@@ -27,4 +27,8 @@ jobs:
     - name: unit-test
       run: |
         export TUSHARE_TOKEN=${{ secrets.TUSHARE_TOKEN }}
+        mkdir -p /home/runner/BAZEL_USER_ROOT
+        export BAZEL_USER_ROOT=/home/runner/BAZEL_USER_ROOT
+        mkdir -p /home/runner/OUTPUT_DIR
+        export OUTPUT_DIR=/home/runner/OUTPUT_DIR
         docker-compose up --exit-code-from bazel
