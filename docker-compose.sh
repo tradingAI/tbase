@@ -3,6 +3,9 @@ cd "$(dirname "$0")"
 
 export BAZEL_RUNID=$RANDOM
 
+echo $BAZEL_RUNID
+echo `ls -l /root/cache`
+
 bazel --batch \
       --output_user_root=/root/cache/bazel \
       test --package_path=/root/tbase \
