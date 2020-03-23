@@ -1,5 +1,5 @@
 # https://github.com/tradingAI/docker/blob/master/bazel.Dockerfile
-FROM tradingai/bazel:1.0.0
+FROM tradingai/bazel:latest
 
 RUN apt-get -y update --fix-missing && \
     apt-get -y upgrade --fix-missing && \
