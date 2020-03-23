@@ -1,0 +1,17 @@
+name: CI
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run test in docker container
+        env:
+          BAZEL_USER_ROOT: /home/runner/BAZEL_USER_ROOT
+          OUTPUT_DIR: /home/runner/OUTPUT_DIR
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+        run: |
+          sudo mkdir -p $BAZEL_USER_ROOT
+          sudo mkdir -p $OUTPUT_DIR
+          docker-compose up --exit-code-from bazel bazel
