@@ -1,4 +1,7 @@
-# tbase ![CI](https://github.com/tradingAI/tbase/workflows/CI/badge.svg?branch=master)  
+![CI](https://github.com/tradingAI/tbase/workflows/CI/badge.svg?branch=master)
+[![PyPI version](https://badge.fury.io/py/tbase.svg)](https://badge.fury.io/py/tbase)
+[![Coverage Status](https://coveralls.io/repos/github/tradingAI/tbase/badge.svg?branch=master)](https://coveralls.io/github/tradingAI/tbase?branch=master)
+# tbase
 
 基于强化学习的交易算法Baselines(Pytorch实现). 旨在提供一个在中国股市上可复现的算法Baselines.
 
