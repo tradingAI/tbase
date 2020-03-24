@@ -1,42 +1,8 @@
-# https://github.com/tradingAI/docker/blob/master/bazel.Dockerfile
-FROM tradingai/bazel:latest
-
-RUN apt-get -y update --fix-missing && \
-    apt-get -y upgrade --fix-missing && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install --fix-missing \
-        gcc \
-        g++ \
-        zlibc \
-        zlib1g-dev \
-        libssl-dev \
-        libbz2-dev \
-        libsqlite3-dev \
-        libncurses5-dev \
-        libgdbm-dev \
-        libgdbm-compat-dev \
-        liblzma-dev \
-        libreadline-dev \
-        uuid-dev \
-        libffi-dev \
-        tk-dev \
-        wget \
-        curl \
-        git \
-        make \
-        sudo \
-        bash-completion \
-        tree \
-        vim \
-        software-properties-common && \
-    apt-get -y autoclean && \
-    apt-get -y autoremove && \
-    rm -rf /var/lib/apt-get/lists/*
+# https://github.com/tradingAI/docker/blob/master/ml.Dockerfile
+FROM tradingai/ml:latest
 
 # install tenvs
-RUN pip install tenvs>=1.0.1
-RUN pip install torch==1.4
-RUN pip install tensorflow==2.0.1
-RUN pip install tensorboard==2.0.0
+RUN pip install tenvs>=1.0.2
 
 # ARG BUILD_TIMD
 # ENV BUILD_TIMD=${BUILD_TIMD}
@@ -55,7 +21,6 @@ WORKDIR $CODE_DIR/tbase
 
 ARG TUSHARE_TOKEN
 ENV TUSHARE_TOKEN=${TUSHARE_TOKEN}
-RUN export TUSHARE_TOKEN=$TUSHARE_TOKEN
 
 WORKDIR $CODE_DIR/tbase
 

@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 def read_install_requires():
     reqs = [
-            'tenvs>=1.0.1',
+            'tenvs>=1.0.2',
             'torch>=1.4',
             'tensorflow==2.0.1',
             'tensorboard==2.0.0'
@@ -15,7 +15,7 @@ def read_install_requires():
 
 
 setup(name='tbase',
-      version='0.1.2',
+      version='0.1.3',
       description='基于强化学习的交易算法Baselines',
       url='https://github.com/tradingAI/tbase',
       author='liuwen',
