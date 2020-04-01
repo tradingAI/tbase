@@ -1,4 +1,5 @@
-![CI](https://github.com/tradingAI/tbase/workflows/Test/badge.svg?branch=master)
+![Test](https://github.com/tradingAI/tbase/workflows/Test/badge.svg?branch=master)
+![Docker](https://github.com/tradingAI/tbase/workflows/Docker/badge.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/tbase.svg)](https://badge.fury.io/py/tbase)
 [![Coverage Status](https://coveralls.io/repos/github/tradingAI/tbase/badge.svg?branch=master)](https://coveralls.io/github/tradingAI/tbase?branch=master) [![Join the chat at https://gitter.im/tradingAI/tbase](https://badges.gitter.im/tradingAI/tbase.svg)](https://gitter.im/tradingAI/tbase?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 # tbase
