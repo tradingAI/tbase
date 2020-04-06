@@ -1,14 +1,19 @@
 # https://github.com/tradingAI/docker/blob/master/ml.gpu.Dockerfile
 FROM tradingai/ml:gpu-latest
 
-# install tenvs
-RUN pip install tenvs>=1.0.2
-
-# ARG BUILD_TIMD
-# ENV BUILD_TIMD=${BUILD_TIMD}
-
 ENV CODE_DIR /root/trade
 WORKDIR  $CODE_DIR
+
+# install tenvs
+WORKDIR  $CODE_DIR
+RUN cd $CODE_DIR && rm -rf tenvs
+RUN git clone https://github.com/tradingAI/tenvs.git
+# Clean up pycache and pyc files
+RUN cd $CODE_DIR/tenvs && rm -rf __pycache__ && \
+    find . -name "*.pyc" -delete && \
+    pip install -e .
+
+RUN cd $CODE_DIR && rm -rf tbase
 COPY . $CODE_DIR/tbase
 RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
