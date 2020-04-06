@@ -12,7 +12,6 @@ WORKDIR  $CODE_DIR
 COPY . $CODE_DIR/tbase
 RUN cd $CODE_DIR/tbase && rm -rf __pycache__ && \
     find . -name "*.pyc" -delete && \
-    pip install -r requirements.txt && \
     pip install -e .
 RUN rm -rf /root/.cache/pip \
     && find / -type d -name __pycache__ -exec rm -r {} \+
