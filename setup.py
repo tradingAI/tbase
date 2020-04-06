@@ -1,4 +1,13 @@
+import codecs
+import os
+
 from setuptools import find_packages, setup
+
+
+def read(fname):
+    return codecs.open(os.path.join(
+        os.path.dirname(__file__), fname)).read().strip()
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -6,7 +15,7 @@ with open("README.md", "r") as fh:
 
 def read_install_requires():
     reqs = [
-            'tenvs>=1.0.4',
+            'tenvs>=1.0.5',
             'torch>=1.4',
             'tensorflow==2.0.1',
             'tensorboard==2.0.0'
@@ -15,7 +24,7 @@ def read_install_requires():
 
 
 setup(name='tbase',
-      version='0.1.5',
+      version=read('tbase/VERSION.txt'),
       description='基于强化学习的交易算法Baselines',
       url='https://github.com/tradingAI/tbase',
       author='liuwen',
