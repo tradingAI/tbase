@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo mkdir -p $BAZEL_USER_ROOT
           sudo mkdir -p $OUTPUT_DIR
-          docker-compose up --exit-code-from bazel bazel
+          docker-compose up --exit-code-from test test
 
   build_image:
     runs-on: ubuntu-latest
