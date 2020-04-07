@@ -17,13 +17,13 @@ upload:
 	rm -rf dist
 
 build_cpu:
-	# 需要先在环境变量中设置 TUSHARE_TOKEN
+	# 可以先在环境变量中设置 TUSHARE_TOKEN
 	docker build --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN --build-arg BUILD_TIMD=$(date +%s) . -t tradingai/tbase:latest
 	# 重新 build
 	# docker build --no-cache --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN . -t tradingai/tbase:latest
 
 build_gpu:
-	# 需要先在环境变量中设置 TUSHARE_TOKEN
+	# 可以先在环境变量中设置 TUSHARE_TOKEN
 	docker build -f gpu.Dockerfile --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN --build-arg BUILD_TIMD=$(date +%s) . -t tradingai/tbase:gpu-latest
 	# 重新 build
 	# docker build --no-cache --build-arg TUSHARE_TOKEN=$TUSHARE_TOKEN . -t tradingai/tbase:gpu-latest
