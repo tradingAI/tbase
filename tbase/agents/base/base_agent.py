@@ -53,3 +53,9 @@ class BaseAgent(nn.Module):
 
     def eval(self, *args):
         raise NotImplementedError
+
+    def save_eval(self, *args):
+        raise NotImplementedError
+
+    def infer(self, env):
+        raise NotImplementedError

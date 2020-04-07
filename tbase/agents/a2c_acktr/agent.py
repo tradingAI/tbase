@@ -110,6 +110,8 @@ class Agent(ACAgent):
         t_start = time.time()
         state = self.envs[0].reset()
         for i_iter in range(self.args.max_iter_num):
+            with open(self.args.progress_bar_path, "w") as progress_file:
+                progress_file.write("%d,%d" % (i_iter, self.args.max_iter_num))
             obs, act, rew, obs_t, done, ports, e_t = \
                 self.explore(
                     self.envs[0],

@@ -74,6 +74,41 @@ def make_eval_env(args):
     return env
 
 
+# NOTE: 加载前pre_load_days的数据
+def get_infer_start_day(end, pre_load_days=30):
+    import datetime
+    DATE_FORMAT = '%Y%m%d'
+    end_date = datetime.datetime.strptime(end, DATE_FORMAT)
+    start_date = end_date - datetime.timedelta(days=pre_load_days)
+    return start_date.strftime(DATE_FORMAT)
+
+
+def make_infer_env(args):
+    ts_token = os.getenv("TUSHARE_TOKEN")
+    codes = args.codes.split(",")
+    indexs = args.indexs.split(",")
+    end = args.infer_date
+    pre_load_days = 30 + args.look_back_days
+    start = get_infer_start_day(end, pre_load_days)
+    m = Market(
+            ts_token=ts_token,
+            start=start,
+            end=end,
+            codes=codes,
+            indexs=indexs,
+            data_dir=args.data_dir)
+    used_infos = ["equities_hfq_info", "indexs_info"]
+    env = _make_env(
+        scenario=args.scenario,
+        market=m,
+        investment=args.investment,
+        look_back_days=args.look_back_days,
+        used_infos=used_infos,
+        reward_fn=args.reward_fn,
+        log_deals=args.log_deals)
+    return env
+
+
 def common_arg_parser():
     """
     Create an argparse.ArgumentParser for trading agents.
@@ -154,6 +189,18 @@ def common_arg_parser():
                         default=os.path.join("/tmp", "tbase", "tensorboard"),
                         type=str,
                         help='Directory to save learning curve data.')
+    parser.add_argument('--progress_bar_path', help='path to save progress',
+                        default=os.path.join("/tmp", "tbase", "bar.txt"),
+                        type=str)
+    parser.add_argument('--eval_result_path', help='path to save eval result',
+                        default=os.path.join("/tmp", "tbase", "eval.txt"),
+                        type=str)
+    parser.add_argument("--infer_date", type=str, default='20200408',
+                        help="infer action date")
+    parser.add_argument('--infer_result_path',
+                        help='path to save infer result',
+                        default=os.path.join("/tmp", "tbase", "infer.txt"),
+                        type=str)
     parser.add_argument('--print_action', default=False, action='store_true')
     parser.add_argument('--debug', default=False, action='store_true')
     parser.add_argument('--log_deals', default=False, action='store_true')
@@ -161,4 +208,5 @@ def common_arg_parser():
     parser.add_argument('--play', default=False, action='store_true')
     parser.add_argument('--run_id', type=int, default=1)
     parser.add_argument('--eval', default=False, action='store_true')
+    parser.add_argument('--infer', default=False, action='store_true')
     return parser.parse_args()

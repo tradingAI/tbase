@@ -10,7 +10,7 @@ import torch
 from torch.multiprocessing import set_start_method
 
 from tbase.common.cmd_util import (common_arg_parser, make_env, make_eval_env,
-                                   set_global_seeds)
+                                   make_infer_env, set_global_seeds)
 from tbase.common.logger import logger
 
 
@@ -45,14 +45,20 @@ def main():
     logger.info("Initializing agent by parameters:")
     logger.info(str(args))
     agent = get_agent(env, args)
-    if not args.eval:
+    if not args.eval and not args.infer:
         logger.info("Training agent")
         agent.learn()
         logger.info("Finished, check details by run tensorboard --logdir=%s" %
                     args.tensorboard_dir)
     # eval models
-    eval_env = make_eval_env(args=args)
-    agent.eval(eval_env, args)
+    if args.eval:
+        eval_env = make_eval_env(args=args)
+        agent.eval(eval_env, args)
+
+    # infer actions
+    if args.infer:
+        infer_env = make_infer_env(args=args)
+        agent.infer(infer_env)
 
 
 if __name__ == '__main__':
