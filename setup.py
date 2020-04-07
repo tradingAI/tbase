@@ -18,7 +18,7 @@ def read_install_requires():
             'tenvs>=1.0.5',
             'torch>=1.4',
             'tensorflow==2.0.1',
-            'tensorboard==2.0.0'
+            'tensorboard==2.0.0',
             ]
     return reqs
 
