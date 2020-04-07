@@ -17,7 +17,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
 **1\. Mac OSX/Ubuntu**
-- **安装方式一(直接使用):** `pip install tbase>=0.1.5`
+- **安装方式一(直接使用):** `pip install tbase>=0.1.6`
 - **安装方式二(开发者模式)**
   ```
   git clone https://github.com/tradingAI/tbase
