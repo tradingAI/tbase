@@ -28,8 +28,8 @@ jobs:
 
       - name: docker build
         run: |
-          bash build-docker-image.sh
-          bash build-docker-image-gpu.sh
+          docker build . -t tradingai/tbase:latest
+          docker build -f gpu.Dockerfile . -t tradingai/tbase:gpu-latest
 
       - name: docker login
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
