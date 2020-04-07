@@ -75,6 +75,8 @@ class Agent(BaseAgent):
         current_portfolio = 1.0
         t_start = time.time()
         for i_iter in range(self.args.max_iter_num):
+            with open(self.args.progress_bar_path, "w") as progress_file:
+                progress_file.write("%d,%d" % (i_iter, self.args.max_iter_num))
             [avg_reward, e_t, ports] = [None] * 3
             if self.args.num_env == 1:
                 avg_reward, e_t, ports = self.simple_explore()

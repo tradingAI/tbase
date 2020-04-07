@@ -47,6 +47,11 @@ class ACAgent(BaseAgent):
             self.envs.append(env)
             self.states.append(state)
             self.memorys.append(ReplayBuffer(1e5))
+        with open(self.args.progress_bar_path, "w") as progress_file:
+            if self.args.eval or self.args.infer:
+                progress_file.write("%d,%d\n" % (0, 1))
+            else:
+                progress_file.write("%d,%d\n" % (0, self.args.max_iter_num))
 
     def save(self, dir):
         torch.save(
@@ -59,7 +64,6 @@ class ACAgent(BaseAgent):
         )
 
     def load(self, dir):
-        print(dir)
         if dir is None or not os.path.exists(dir):
             raise ValueError("dir is invalid")
         self.policy.load_state_dict(
@@ -149,9 +153,9 @@ class ACAgent(BaseAgent):
 
     def eval(self, env, args):
         self.load(self.model_dir)
-        _, _, annualized_return, portfolios = env_eval(env,
-                                                       self.policy,
-                                                       args.print_action)
+        mdd, sharpe_ratio, annualized_return, portfolios = env_eval(
+            env, self.policy, args.print_action)
+        # base buy and hold strategy performance
         bh_annualized_return, bh_portfolios = buy_and_hold(env)
         for i in range(len(portfolios)):
             self.writer.add_scalars('backtesting', {
@@ -161,3 +165,48 @@ class ACAgent(BaseAgent):
         logger.info("excess_return: %.3f" % excess_return)
         annual_excess_return = annualized_return - bh_annualized_return
         logger.info("annualized excess_return: %.3f" % annual_excess_return)
+        # save eval results
+        absolute_return = portfolios[-1]
+        ex_base_code = self.args.codes
+        ex_strategy = "buy&hold"
+        self.save_eval(absolute_return, annualized_return, mdd, sharpe_ratio,
+                       ex_base_code, ex_strategy,
+                       bh_portfolios[-1], bh_annualized_return)
+
+    def save_eval(self, absolute_return, annualized_return, max_drawdown,
+                  sharpe_ratio, ex_base_code, ex_strategy, ex_absolute_value,
+                  ex_annualized_value):
+        """
+        input reference: https://github.com/tradingAI/proto/blob/011cb6162951ac7e1fc7214d8422bfbac22a883d/model/evaluate.proto#L26
+
+        """
+        values = [absolute_return, annualized_return, max_drawdown,
+                  sharpe_ratio, ex_base_code, ex_strategy, ex_absolute_value,
+                  ex_annualized_value]
+        linestr = ",".join([str(v) for v in values])
+        with open(self.args.eval_result_path, "w") as f:
+            f.write(linestr + "\n")
+        with open(self.args.progress_bar_path, "w") as progress_file:
+            if self.args.eval:
+                progress_file.write("%d,%d\n" % (1, 1))
+            else:
+                progress_file.write("%d,%d\n" % (
+                    self.args.max_iter_num, self.args.max_iter_num))
+
+    def infer(self, env):
+        self.load(self.model_dir)
+        state = env.reset(infer=True)
+        state_var = torch.tensor(state).unsqueeze(0).permute(1, 0, 2).to(
+            torch.float)
+        with torch.no_grad():
+            action = self.policy.action(state_var)
+            action = action.detach().cpu()[0].numpy().astype(np.float)
+            logger.info("infer %s result %s: " % (self.args.infer_date,
+                                                  str(action)))
+            actions = env.parse_infer_action(action)
+            with open(self.args.infer_result_path, "w") as f:
+                for act in actions:
+                    linestr = ",".join([str(v) for v in act])
+                    f.write(linestr + "\n")
+            with open(self.args.progress_bar_path, "w") as progress_file:
+                progress_file.write("%d,%d\n" % (1, 1))
