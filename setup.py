@@ -19,6 +19,7 @@ def read_install_requires():
             'torch>=1.4',
             'tensorflow==2.0.1',
             'tensorboard==2.0.0',
+            'trunner>=1.0.3',
             ]
     return reqs
 
@@ -40,5 +41,6 @@ setup(name='tbase',
         "Operating System :: OS Independent",
         ],
       python_requires='>=3',
-      install_requires=read_install_requires()
+      install_requires=read_install_requires(),
+      package_data={'': ['*.csv', '*.txt']}
       )
