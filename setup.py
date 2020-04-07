@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
 
 def read_install_requires():
     reqs = [
-            'tenvs>=1.0.7',
+            'tenvs>=1.0.8',
             'torch>=1.4',
             'tensorflow==2.0.1',
             'tensorboard==2.0.0',
