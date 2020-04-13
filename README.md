@@ -30,7 +30,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 - 1. [docker install](https://docs.docker.com/install/)
 - 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
 - 3. 构建image的方式
-  - Build your docker image: `bash build-docker-image.sh`,
+  - Build your docker image: `make build_cpu`
   - [docker hub](https://hub.docker.com/repository/docker/tradingai/tbase): `docker pull tradingai/tbase:latest`
   - [阿里云镜像](https://cr.console.aliyun.com/repository/cn-hangzhou/tradingai/tbase/images): `docker pull registry.cn-hangzhou.aliyuncs.com/tradingai/tbase:latest`
 - 4. 手动运行(Note: 如果使用阿里云镜像，需要更改镜像名称)
@@ -59,7 +59,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
   - [x] 多进程单GPU并行
   - [ ] 多进程多GPU并行
   - [ ] 混合精度训练(Apex)
-  - [ ] 分布式多机多卡并行(基于[Horovod](https://github.com/horovod/horovod))
+  - [ ] 分布式多机多卡并行: [scheduler](https://github.com/tradingAI/scheduler)+[runner](https://github.com/tradingAI/runner)
 
 - [x] 通过运行参数选择:
 
