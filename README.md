@@ -192,7 +192,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
   - 评估的运行参数: codes, start, end
   - performance: 参考评估指标(去除绝对收益率)
   - 模型的百度云盘链接
-- [ ] Experiments Tracking: [MLflow Tracking](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking)
+- [ ] Experiments Tracking: [Tweb + ELK](https://github.com/tradingAI/tweb)
 
 **由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，将实验结果分享出来**
 
