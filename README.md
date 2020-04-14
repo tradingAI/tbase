@@ -17,39 +17,14 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 ```
 
 **1\. Mac OSX/Ubuntu**
-- **安装方式一(直接使用):** `pip install tbase --upgrade`
-- **安装方式二(开发者模式)**
+- **方式一(直接使用):** `pip install tbase --upgrade`
+- **方式二(开发者模式)**
   ```
   git clone https://github.com/tradingAI/tbase
   cd tbase
   pip install -e .
   ```
-
-**2\. Docker**
-
-- 1. [docker install](https://docs.docker.com/install/)
-- 2. `export TUSHARE_TOKEN=YOUR_TOKEN`
-- 3. 构建image的方式
-  - Build your docker image: `make build_cpu`
-  - [docker hub](https://hub.docker.com/repository/docker/tradingai/tbase): `docker pull tradingai/tbase:latest`
-  - [阿里云镜像](https://cr.console.aliyun.com/repository/cn-hangzhou/tradingai/tbase/images): `docker pull registry.cn-hangzhou.aliyuncs.com/tradingai/tbase:latest`
-- 4. 手动运行(Note: 如果使用阿里云镜像，需要更改镜像名称)
-  - CPU版本
-    ```
-    docker run -it \
-        -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
-        -v $PWD:/root/trade/tbase \
-        tradingai/tbase:latest bash
-    ```
-  - GPU版本
-    ```
-    docker run --runtime=nvidia -it \
-        -e TUSHARE_TOKEN=$TUSHARE_TOKEN \
-        -v $PWD:/root/trade/tbase \
-        tradingai/tbase:gpu-latest bash
-    ```
-  - `python -m tbase.run --alg ddpg --codes 000001.SZ --seed 0`
-
+**2\. [Docker install](docs/docker_guide.md)**
 
 # Features(In progress)
 - [x] 可以完美复现训练过程, [How?](docs/reproducible.md)
@@ -63,7 +38,7 @@ export TUSHARE_TOKEN=YOUR_TOKEN
 
 - [x] 通过运行参数选择:
 
-  - [x] 环境
+  - [x] 场景([tenvs](https://github.com/tradingAI/tenvs) scenario)
   - [x] 算法
   - [x] Policy-Net
   - [x] Value-Net
@@ -135,8 +110,6 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 ![loss](images/default_param.png)
 
-# 加载模型
-
 # 评估&&回测
 
 - [x] 训练周期内的评估指标
@@ -161,22 +134,14 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 - [x] 年化收益率
 
-## Contribution
-- Fork this repo
-- Add or change code && **Please add tests for changes**
-- Test
-  - step1. 设置[docker-compose](docker-compose.yml)需要的环境变量: BAZEL_USER_ROOT, OUTPUT_DIR, TUSHARE_TOKEN
-  - step2. `docker-compose up`
-- Send pull request
-
-# 如何增加agent
+# 如何增加自定义agent
 1. Fork  https://github.com/tradingAI/tbase
 2. 在tbase.agents下添加目录, 例如: ddpg
 3. 新建agent.py, 在类名为Agent的类中实现你的agent(继承tbase.common.base_agent.BaseAgent)
 4. **添加单元测试**
   - step1. 设置[docker-compose](docker-compose.yml)需要的环境变量: BAZEL_USER_ROOT, OUTPUT_DIR, TUSHARE_TOKEN
   - step2. `docker-compose up`
-5. 发起pull request
+5. pull request
 
 # 待优化
 
