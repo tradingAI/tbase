@@ -21,7 +21,7 @@ def read_install_requires():
         'torch',
         'tensorflow',
         'tensorboard',
-        'trunner>=1.0.3',
+        'trunner',
     ]
     return reqs
 
