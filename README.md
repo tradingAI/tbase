@@ -126,7 +126,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 - [ ] 考虑到部署到线上的方便性, 更换tensorflow实现
 - [ ] 参数配置管理: yml
 - [ ] 使用cpprb作业replay buffer
-- [ ] 测试: 提升 pytest 覆盖率([coveralls.io](https://coveralls.io/))
+- [x] 测试: pytest 覆盖率([coveralls.io](https://coveralls.io/))
 - [ ] 模型分享，评估，部署(wandb)
   - 模型榜单排名
   - performance: 参考评估指标(去除绝对收益率)
