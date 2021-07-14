@@ -131,7 +131,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
   - 模型榜单排名
   - performance: 参考评估指标(去除绝对收益率)
 - [ ] 大规模训练: 参考 [menger](https://ai.googleblog.com/2020/10/massively-large-scale-distributed.html)
-  - [ ] 分布式, evnviroment explorer, 方便无限scale
+  - [ ] 分布式, vector evnviroment explorer, 方便无限scale
   - [ ] 多个buffer
     - [ ] sample
     - [ ] model update & inference
