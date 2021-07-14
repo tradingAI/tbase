@@ -17,10 +17,10 @@ def read_install_requires():
     reqs = [
         'flake8',
         'pytest',
-        'tenvs>=1.0.8',
-        'torch>=1.4',
-        'tensorflow==2.0.1',
-        'tensorboard==2.0.0',
+        'tenvs',
+        'torch',
+        'tensorflow',
+        'tensorboard',
         'trunner>=1.0.3',
     ]
     return reqs
