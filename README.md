@@ -1,10 +1,9 @@
 ![Test](https://github.com/tradingAI/tbase/workflows/Test/badge.svg?branch=master)
-![Docker](https://github.com/tradingAI/tbase/workflows/Docker/badge.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/tbase.svg)](https://badge.fury.io/py/tbase)
-[![Coverage Status](https://coveralls.io/repos/github/tradingAI/tbase/badge.svg?branch=master)](https://coveralls.io/github/tradingAI/tbase?branch=master) [![Join the chat at https://gitter.im/tradingAI/tbase](https://badges.gitter.im/tradingAI/tbase.svg)](https://gitter.im/tradingAI/tbase?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Coverage Status](https://coveralls.io/repos/github/tradingAI/tbase/badge.svg?branch=dev)](https://coveralls.io/github/tradingAI/tbase?branch=dev)
 # tbase
 
-基于强化学习的交易算法Baselines(Pytorch实现). 旨在提供一个在中国股市上可复现的算法Baselines.
+基于强化学习的交易算法Baselines(Pytorch&Tensorflow2实现). 旨在提供一个在中国股市上可复现的算法Baselines.
 
 支持环境： Python 3.5–3.7
 
@@ -14,39 +13,27 @@
 
 ```
 export TUSHARE_TOKEN=YOUR_TOKEN
+
+pip install tbase --upgrade
+```
+# Example
+```
+python3 -m tbase.run --alg ddpg
 ```
 
-**1\. Mac OSX/Ubuntu**
-- **方式一(直接使用):** `pip install tbase --upgrade`
-- **方式二(开发者模式)**
-  ```
-  git clone https://github.com/tradingAI/tbase
-  cd tbase
-  pip install -e .
-  ```
-**2\. [Docker install](docs/docker_guide.md)**
 
 # Features(In progress)
 - [x] 可以完美复现训练过程, [How?](docs/reproducible.md)
 - [ ] 加速
-
   - [x] 多进程CPU并行: 多进程运行独立的Enviroment进行探索
   - [x] 多进程单GPU并行
   - [ ] 多进程多GPU并行
-  - [ ] 混合精度训练(Apex)
-  - [ ] 分布式多机多卡并行: [scheduler](https://github.com/tradingAI/scheduler)+[runner](https://github.com/tradingAI/runner)
+  - [ ] 分布式多机多卡并行: 参考 [menger](https://ai.googleblog.com/2020/10/massively-large-scale-distributed.html)
 
-- [x] 通过运行参数选择:
-
-  - [x] 场景([tenvs](https://github.com/tradingAI/tenvs) scenario)
-  - [x] 算法
-  - [x] Policy-Net
-  - [x] Value-Net
-
-- 支持RL算法:
+- 支持算法:
 
   - [ ] 单Agent
-
+    - [ ] (Double Dueling)DQN
     - [x] DDPG
     - [x] TD3(Twin Delayed Deep Deterministic Policy Gradients)
     - [ ] A2C-ACKTR
@@ -55,9 +42,9 @@ export TUSHARE_TOKEN=YOUR_TOKEN
     - [ ] PPO
     - [ ] PPO2
     - [ ] GAIL
+    - [ ] OPD
 
   - [ ] 多Agent
-
     - [ ] MADDPG
 
 - 自定义Net
@@ -134,30 +121,22 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 - [x] 年化收益率
 
-# 如何增加自定义agent
-1. Fork  https://github.com/tradingAI/tbase
-2. 在tbase.agents下添加目录, 例如: ddpg
-3. 新建agent.py, 在类名为Agent的类中实现你的agent(继承tbase.common.base_agent.BaseAgent)
-4. **添加单元测试**
-  - step1. 设置[docker-compose](docker-compose.yml)需要的环境变量: BAZEL_USER_ROOT, OUTPUT_DIR, TUSHARE_TOKEN
-  - step2. `docker-compose up`
-5. pull request
-
 # 待优化
 
-- [x] [bazel build](https://bazel.build/)
-- [x] 版本管理
-- [x] Github Actions CI
-- [ ] 测试: 提升 unit test 覆盖率([coveralls.io](https://coveralls.io/))
-- [ ] Blog Post && baseline模型共享(百度网盘)
-- [ ] 模型分享，评估，部署: [tweb](http://tweb.aiminders.com/)[guest:guest], [tweb repo](https://github.com/tradingAI/tweb)
-  - 提供web上传方式，模型榜单排名
-  - commit id
-  - 训练的运行参数
-  - 评估的运行参数: codes, start, end
+- [ ] 考虑到部署到线上的方便性, 更换tensorflow实现
+- [ ] 参数配置管理: yml
+- [ ] 使用cpprb作业replay buffer, 提升buffer性能
+- [x] 测试: pytest 覆盖率([coveralls.io](https://coveralls.io/))
+- [ ] 模型分享，评估，部署(wandb)
+  - 模型榜单排名
   - performance: 参考评估指标(去除绝对收益率)
-  - 模型的百度云盘链接
-- [ ] Experiments Tracking: [Tweb + ELK](https://github.com/tradingAI/tweb)
+- [ ] 大规模训练: 参考 [menger](https://ai.googleblog.com/2020/10/massively-large-scale-distributed.html)
+  - [ ] 分布式, vector evnviroment explorer, 方便无限scale
+  - [ ] 多个buffer
+    - [ ] sample
+    - [ ] model update & inference
+  - [ ] 监控: explorer, buffer, learner, 吞吐量，以方便定位bottle neck
+  - [ ] stock embedding
 
 **由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，将实验结果分享出来**
 

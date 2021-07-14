@@ -1,0 +1,9 @@
+pytest
+pytest-cov
+coveralls
+flake8
+tenvs
+torch
+tensorflow
+tensorboard
+trunner

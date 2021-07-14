@@ -1,17 +1,55 @@
-name: Test
-on: [push]
+name: Unit Test
+
+on:
+  push:
+    branches-ignore:
+      - ignroe
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
     steps:
       - uses: actions/checkout@v2
-      - name: Run test in docker container
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        id: pip_cache
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.cache/pip
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Unit Test
         env:
-          BAZEL_USER_ROOT: /home/runner/BAZEL_USER_ROOT
-          OUTPUT_DIR: /home/runner/OUTPUT_DIR
           TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sudo mkdir -p $BAZEL_USER_ROOT
-          sudo mkdir -p $OUTPUT_DIR
-          docker-compose up --exit-code-from test test
+          python -c "import sys; print('Python', sys.version)"
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -e .
+          python -m pytest --cov-report=xml:docs/cov/report.xml --cov=tbase
+          coverage report -m
+      - name: Lint with flake8
+        # pip install flake8
+        run: |
+          flake8 .
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v1.0.3
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: docs/cov/report.xml

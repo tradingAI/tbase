@@ -6,7 +6,6 @@ import time
 import numpy as np
 import torch
 import torch.multiprocessing as mp
-
 from tbase.agents.base.base_agent import BaseAgent
 from tbase.agents.base.explore import (buy_and_hold, env_eval, explore,
                                        simple_explore)
@@ -177,8 +176,7 @@ class ACAgent(BaseAgent):
                   sharpe_ratio, ex_base_code, ex_strategy, ex_absolute_value,
                   ex_annualized_value):
         """
-        input reference: https://github.com/tradingAI/proto/blob/011cb6162951ac7e1fc7214d8422bfbac22a883d/model/evaluate.proto#L26
-
+        # TODO(liuwen): remove
         """
         values = [absolute_return, annualized_return, max_drawdown,
                   sharpe_ratio, ex_base_code, ex_strategy, ex_absolute_value,
