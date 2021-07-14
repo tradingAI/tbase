@@ -12,3 +12,5 @@ bazel-*
 tests/
 dist/
 build/
+docs/cov/report.xml
+.coverage

@@ -1,0 +1,5 @@
+[run]
+omit = 
+    tbase/*_test.py
+    *__init__.py
+    tbase/common/logger.py
