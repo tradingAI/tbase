@@ -30,7 +30,7 @@ class TestTorchUtils(unittest.TestCase):
     def test_lstm(self):
         rnn = lstm(30, 50, 1, 0)
         p_sums, dims = self.sum_params(rnn)
-        np.testing.assert_almost_equal(np.sum(p_sums), 8.597455769777298)
+        np.testing.assert_almost_equal(np.sum(p_sums), 8.597455769777298, 5)
         self.assertEqual([[200, 30], [200, 50], [200], [200]], dims)
 
 
