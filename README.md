@@ -1,5 +1,4 @@
 ![Test](https://github.com/tradingAI/tbase/workflows/Test/badge.svg?branch=master)
-![Docker](https://github.com/tradingAI/tbase/workflows/Docker/badge.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/tbase.svg)](https://badge.fury.io/py/tbase)
 [![Coverage Status](https://coveralls.io/repos/github/tradingAI/tbase/badge.svg?branch=dev)](https://coveralls.io/github/tradingAI/tbase?branch=dev)
 # tbase
