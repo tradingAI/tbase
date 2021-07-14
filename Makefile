@@ -1,4 +1,4 @@
-.PHONY: install update test dist upload build_cpu build_gpu lint
+.PHONY: install update test upload lint
 
 install:
 	pip3 install -e . --user
