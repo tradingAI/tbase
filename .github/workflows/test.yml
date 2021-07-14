@@ -49,8 +49,3 @@ jobs:
         # pip install flake8
         run: |
           flake8 .
-      - name: Upload to codecov
-        uses: codecov/codecov-action@v1.0.3
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          file: docs/cov/report.xml
