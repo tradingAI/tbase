@@ -44,8 +44,12 @@ jobs:
           pip install -e .
           python -m pytest --cov-report=xml:docs/cov/report.xml --cov=tbase
           coverage report -m
-          coveralls --rcfile=docs/cov/.coveragerc
       - name: Lint with flake8
         # pip install flake8
         run: |
           flake8 .
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v1.0.3
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: docs/cov/report.xml
