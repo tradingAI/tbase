@@ -125,7 +125,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 - [ ] 考虑到部署到线上的方便性, 更换tensorflow实现
 - [ ] 参数配置管理: yml
-- [ ] 使用cpprb作业replay buffer
+- [ ] 使用cpprb作业replay buffer, 提升buffer性能
 - [x] 测试: pytest 覆盖率([coveralls.io](https://coveralls.io/))
 - [ ] 模型分享，评估，部署(wandb)
   - 模型榜单排名
@@ -136,7 +136,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
     - [ ] sample
     - [ ] model update & inference
   - [ ] 监控: explorer, buffer, learner, 吞吐量，以方便定位bottle neck
-  - [ ] stock2vector
+  - [ ] stock embedding
 
 **由于计算资源有限，为所有的算法跑完A股中所有的股票，需要花费大量的时间，希望有空闲计算资源的朋友，可以跑一下模型，将实验结果分享出来**
 
