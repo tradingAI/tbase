@@ -19,5 +19,4 @@ upload:
 	rm -rf dist
 
 lint:
-	buildifier WORKSPACE
-	find ./ -name 'BUILD' | xargs buildifier
+	flake8 .
