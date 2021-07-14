@@ -42,7 +42,7 @@ jobs:
           python -c "import sys; print('Python', sys.version)"
           python -m pip install --upgrade pip setuptools wheel
           pip install -e .
-          python -m pytest --cov-report=xml:docs/cov/report.xml --cov=tenvs
+          python -m pytest --cov-report=xml:docs/cov/report.xml --cov=tbase
           coverage report -m
           coveralls --rcfile=docs/cov/.coveragerc
       - name: Lint with flake8
