@@ -15,12 +15,14 @@ with open("README.md", "r") as fh:
 
 def read_install_requires():
     reqs = [
-            'tenvs>=1.0.8',
-            'torch>=1.4',
-            'tensorflow==2.0.1',
-            'tensorboard==2.0.0',
-            'trunner>=1.0.3',
-            ]
+        'flake8',
+        'pytest',
+        'tenvs>=1.0.8',
+        'torch>=1.4',
+        'tensorflow==2.0.1',
+        'tensorboard==2.0.0',
+        'trunner>=1.0.3',
+    ]
     return reqs
 
 
@@ -36,10 +38,10 @@ setup(name='tbase',
       include_package_data=True,
       zip_safe=False,
       classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        ],
+          "Programming Language :: Python :: 3",
+          "License :: OSI Approved :: MIT License",
+          "Operating System :: OS Independent",
+      ],
       python_requires='>=3',
       install_requires=read_install_requires(),
       package_data={'': ['*.csv', '*.txt']}
