@@ -10,7 +10,6 @@ update:
 test:
 	python3 -m pytest --cov-report=xml:docs/cov/report.xml --cov=tbase
 	coverage report -m
-	coveralls --rcfile=docs/cov/.coveragerc
 
 upload:
 	python3 setup.py sdist bdist_wheel
