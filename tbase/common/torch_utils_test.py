@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-
 from tbase.common.cmd_util import set_global_seeds
 from tbase.common.torch_utils import fc, lstm
 
@@ -24,16 +23,14 @@ class TestTorchUtils(unittest.TestCase):
     def test_fc(self):
         layer = fc(10, 2)
         p_sums, dims = self.sum_params(layer)
-        self.assertEqual([0.7398650534451008, 0.0],
-                         p_sums)
+        np.testing.assert_almost_equal(0.7398650534451008,
+                                       np.sum(p_sums))
         self.assertEqual([[2, 10], [2]], dims)
 
     def test_lstm(self):
         rnn = lstm(30, 50, 1, 0)
         p_sums, dims = self.sum_params(rnn)
-        self.assertEqual(
-            [-4.025678478181362, 11.526431918144226,
-             0.8502306267619133, 0.24647170305252075], p_sums)
+        np.testing.assert_almost_equal(np.sum(p_sums), 8.597455769777298)
         self.assertEqual([[200, 30], [200, 50], [200], [200]], dims)
 
 
