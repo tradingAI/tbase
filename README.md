@@ -95,7 +95,7 @@ python3 -m tbase.run --alg ddpg --num_env 1 --gamma 0.53 --seed 9 --print_action
 
 可以在[http://localhost:6006](http://localhost:6006/)中查看训练的loss, reward ,portfolio, time等指标
 
-![loss](images/default_param.png)
+![loss](docs/images/default_param.png)
 
 # 评估&&回测
 
